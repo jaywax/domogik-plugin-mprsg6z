@@ -38,6 +38,19 @@ import serial
 import traceback
 import time
 
+PARAM_TYPE = {
+  1: {"param" :"PA", "value" : "00"},
+  2: {"param" :"PR", "value" : "00"},
+  3: {"param" :"MU", "value" : "00"}, 
+  4: {"param" :"DT", "value" : "00"}, 
+  5: {"param" :"VO", "value" : "00"}, 
+  6: {"param" :"TR", "value" : "07"}, 
+  7: {"param" :"BS", "value" : "07"}, 
+  8: {"param" :"BL", "value" : "10"}, 
+  9: {"param" :"CH", "value" : "01"}, 
+  10: {"param" :"LS", "value" : "00"}, 
+}
+
 # -------------------------------------------------------------------------------------------------
 class Mpr6zhmautException(Exception):
     """
@@ -77,19 +90,20 @@ class Mpr6zhmautLine:
         return "lid:{0}\nldev:{1}\nlnumamp:{2}".format(self.lid,self.ldev,self.lnumamp)
 
 
+# -------------------------------------------------------------------------------------------------
 class Mpr6zhmautAmp:
     """
     Construct the mpr6zhmaut amp from an object issued from the Mpr6zhmautLine class
     """
-    def __init__(self, the_line, aid):
+    def __init__(self, line, aid):
         """
         Create mpr6zhmaut amp instance, allowing to use zone and general parameters
         @the_line : the line issued from the class used to create this amp
         @aid : unique identifier ot this amp
         """
 
-        self.the_line = the_line
-        self.lid = the_line.lid
+        self.line = line
+        self.lid = line.lid
         self.aid = aid
 
     def __str__(self):
