@@ -54,31 +54,46 @@ class Mpr6zhmautException(Exception):
 # -------------------------------------------------------------------------------------------------
 class Mpr6zhmautLine:
     """ 
-    Construct the mpr6zhmaut line
+    Construct the mpr6zhmaut line instance
     """
-    def __init__(self, log, laddress, dev='/dev/ttyUSB0', nb_amp='1'):
+    def __init__(self, lid, ldev='/dev/ttyUSB0', lnumamp='1'):
         """
         Create mpr6zhmaut line instance, allowing to use amp and zone
-        @laddress : unique identifier of the line
-        @param dev : device where the interface is connected to
+        @lid : unique identifier of this line
+        @ldev : device where the interface is connected to
         default '/dev/ttyUSB0'
-        @nb_amp : number of amp to handle on this line
+        @lnumamp : number of amp to handle on this line
         default '1'
         """
 
-        self.log = log
-        self.laddress = laddress
-        self._dev = dev
-        self.nb_amp = nb_amp
+        self.lid = lid
+        self.ldev = ldev
+        self.lnumamp = lnumamp
 
-class Mpr6zhmautAmp(Mpr6zhmautLine):
-    """
-    Construct the mpr6zhmaut amp from the class Mpr6zhmautLine
-    """
-    def __init__(self, aaddress, params):
+    def __str__(self):
         """
-        Create mpr6zhmaut amp instance
+        Method used to print the ojbect class
+        """
+        return "lid:{0}\nldev:{1}\nlnumamp:{2}".format(self.lid,self.ldev,self.lnumamp)
+
+
+class Mpr6zhmautAmp:
+    """
+    Construct the mpr6zhmaut amp from an object issued from the Mpr6zhmautLine class
+    """
+    def __init__(self, the_line, aid):
+        """
+        Create mpr6zhmaut amp instance, allowing to use zone and general parameters
+        @the_line : the line issued from the class used to create this amp
+        @aid : unique identifier ot this amp
         """
 
-        self.aaddress = Mpr6zhmautLine.laddress + "toto"
-        
+        self.the_line = the_line
+        self.lid = the_line.lid
+        self.aid = aid
+
+    def __str__(self):
+        """
+        Method used to print the ojbect class
+        """
+        return "the_line.lid:{0}\naid:{1}".format(self.lid,self.aid)
