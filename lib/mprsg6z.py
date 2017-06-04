@@ -89,6 +89,41 @@ class Mpr6zhmautLine:
         """
         return "lid:{0}\nldev:{1}\nlnumamp:{2}".format(self.lid,self.ldev,self.lnumamp)
 
+    def open(self):
+        """
+        Open (opens the device once)
+        @ldev : the device string to open
+        """
+        try:
+            #self._log.info(u"Try to open MPR6ZMAUT: %s" % ldev)
+            self._ser = serial.Serial(self.ldev, 9600, timeout=1)
+            #self._log.info("MPR6ZMAUT: %s opened" % ldev)
+        except:
+            error = "Error while opening Mpr6zmaut : %s. Check if it is the good device or if you have the good permissions on it." % ldev
+            raise Mpr6zhmautException(error)
+
+    def close(self):
+        """
+        Close the open device
+        """
+        #self._log.info(u"Close MRP6ZMAUT")
+        try:
+            self._ser.close()
+        except:
+            error = "Error while closing device"
+            raise Mpr6zhmautException(error)
+
+    def write(self, command):
+        """
+        Write command to the line
+        @param command : command to send to the line
+        """
+        #self._log.debug(u"==> Write command '%s' to the line" % (command))
+        try:
+            self._ser.write(command)
+        except:
+            error = "Error while writing to mpr6zhmaut device"
+            raise Mpr6zhmautException(error)
 
 # -------------------------------------------------------------------------------------------------
 class Mpr6zhmautAmp:
@@ -98,8 +133,8 @@ class Mpr6zhmautAmp:
     def __init__(self, line, aid):
         """
         Create mpr6zhmaut amp instance, allowing to use zone and general parameters
-        @the_line : the line issued from the class used to create this amp
-        @aid : unique identifier ot this amp
+        @line : the serial line used for this amp
+        @aid : unique identifier of the amp
         """
 
         self.line = line
