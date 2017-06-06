@@ -37,6 +37,7 @@ Implements
 import serial
 import traceback
 import time
+import re
 
 PARAM_TYPE = {
   1: {"param" :"PA", "value" : "00"},
@@ -72,6 +73,7 @@ class Mpr6zhmautLine:
     def __init__(self, lid, ldev='/dev/ttyUSB0', lnumamp='1'):
         """
         Create mpr6zhmaut line instance, allowing to use amp and zone
+        Create a dict with all params for all amps and zones of the line
         @lid : unique identifier of this line
         @ldev : device where the interface is connected to
         default '/dev/ttyUSB0'
@@ -94,11 +96,11 @@ class Mpr6zhmautLine:
         Open (opens the device once)
         """
         try:
-            #self._log.info(u"Try to open MPR6ZMAUT: %s" % ldev)
+            #self._log.info(u"Try to open MPR6ZMAUT: %s" % device)
             self._ser = serial.Serial(device, 9600, timeout=1)
-            #self._log.info("MPR6ZMAUT: %s opened" % ldev)
+            #self._log.info("MPR6ZMAUT: %s opened" % device)
         except:
-            error = "Error while opening Mpr6zmaut : %s. Check if it is the good device or if you have the good permissions on it." % ldev
+            error = "Error while opening Mpr6zmaut : %s. Check if it is the good device or if you have the good permissions on it." % device
             raise Mpr6zhmautException(error)
 
     def close(self):
@@ -123,6 +125,49 @@ class Mpr6zhmautLine:
         except:
             error = "Error while writing to mpr6zhmaut device"
             raise Mpr6zhmautException(error)
+
+    def _readline(self, a_serial, eol=b'\r\r\n'):
+        """
+        Special method used to format the data return by Serial.serial
+        @param a_serial : the Serial.serial line
+        """
+        leneol = len(eol)
+        line = bytearray()
+        while True:
+            c = a_serial.read(1)
+            if c:
+                line += c
+                if line[-leneol:] == eol:
+                    break
+            else:
+                break
+        return bytes(line)
+
+    def get_zone(self, amp, zone):
+        """
+        Return a dict with the full params of an zone's amp
+        @param amp : the number of the amp to pull
+        @param zone : the number of the zone to pull
+        """
+        #self._log.debug(u"==> Write command '%s' to the line" % (command))
+        self._ser.write('?' + amp + zone + '\r\n')
+        rcv = self._readline(self._ser)
+	regex = '>' + amp + zone + '(.+?)\\r\\r\\n'
+        reponse = re.search(regex, rcv).group(1)
+        return rcv, reponse
+
+    def get_param(self, amp, zone, param):
+        """
+        Return the value of a parameter of a submitted zone
+        @param amp : amp to use
+        @param zone : zone to use
+        @param param : param to pull
+        """
+        self._ser.write('?' + amp + zone + param + '\r\n')
+        rcv = self._readline(self._ser)
+	regex = '>' + amp + zone + param + '(.+?)\\r\\r\\n'
+        reponse = re.search(regex, rcv).group(1)
+        return reponse
 
 # -------------------------------------------------------------------------------------------------
 class Mpr6zhmautAmp:
