@@ -170,7 +170,9 @@ class Mpr6zhmautLine:
         rcv = self._readline(self._ser)
 	regex = '>' + amp + zone + param + '(.+?)\\r\\r\\n'
         reponse = re.search(regex, rcv).group(1)
-        return reponse
+        return_param = {}
+        return_param[param] = reponse
+        return return_param
 
     def set_zone_param(self, amp, zone, param, value):
         """
