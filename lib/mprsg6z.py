@@ -84,7 +84,7 @@ class Mpr6zhmautLine:
         self.lid = lid
         self.ldev = ldev
         self.lnumamp = lnumamp
-
+        
     def __str__(self):
         """
         Method used to print the ojbect class
@@ -114,21 +114,10 @@ class Mpr6zhmautLine:
             error = "Error while closing device"
             raise Mpr6zhmautException(error)
 
-    def write(self, command):
-        """
-        Write command to the line
-        @param command : command to send to the line
-        """
-        #self._log.debug(u"==> Write command '%s' to the line" % (command))
-        try:
-            self._ser.write(command + '\r\n')
-        except:
-            error = "Error while writing to mpr6zhmaut device"
-            raise Mpr6zhmautException(error)
 
     def _readline(self, a_serial, eol=b'\r\r\n'):
         """
-        Special method used to format the data return by Serial.serial
+        Method used to format the data return by Serial.serial
         @param a_serial : the Serial.serial line
         """
         leneol = len(eol)
@@ -149,25 +138,49 @@ class Mpr6zhmautLine:
         @param amp : the number of the amp to pull
         @param zone : the number of the zone to pull
         """
-        #self._log.debug(u"==> Write command '%s' to the line" % (command))
         self._ser.write('?' + amp + zone + '\r\n')
         rcv = self._readline(self._ser)
 	regex = '>' + amp + zone + '(.+?)\\r\\r\\n'
         reponse = re.search(regex, rcv).group(1)
-        return rcv, reponse
+        zone = {}
+        zone["PA"] = reponse[0:2]
+        zone["PR"] = reponse[2:4]
+        zone["MU"] = reponse[4:6]
+        zone["DT"] = reponse[6:8]
+        zone["VO"] = reponse[8:10]
+        zone["TR"] = reponse[10:12]
+        zone["BS"] = reponse[12:14]
+        zone["BL"] = reponse[14:16]
+        zone["CH"] = reponse[16:18]
+        zone["LS"] = reponse[18:20]
+        return zone
 
-    def get_param(self, amp, zone, param):
+    def get_zone_param(self, amp, zone, param):
         """
         Return the value of a parameter of a submitted zone
         @param amp : amp to use
         @param zone : zone to use
         @param param : param to pull
         """
-        self._ser.write('?' + amp + zone + param + '\r\n')
+        try:
+            self._ser.write('?' + amp + zone + param + '\r\n')
+        except:
+            error = "Error while writing to mpr6zhmaut device"
+            raise Mpr6zhmautException(error)
         rcv = self._readline(self._ser)
 	regex = '>' + amp + zone + param + '(.+?)\\r\\r\\n'
         reponse = re.search(regex, rcv).group(1)
         return reponse
+
+    def set_zone_param(self, amp, zone, param, value):
+        """
+        Set param on the zone
+        """
+        try:
+            self._ser.write('<' + amp + zone + param + value + '\r\n')
+        except:
+            error = "Error while writing to mpr6zhmaut device"
+            raise Mpr6zhmautException(error)
 
 # -------------------------------------------------------------------------------------------------
 class Mpr6zhmautAmp:
