@@ -38,18 +38,19 @@ import serial
 import traceback
 import time
 import re
+from collections import defaultdict
 
-PARAM_TYPE = {
-  1: {"param" :"PA", "value" : "00"},
-  2: {"param" :"PR", "value" : "00"},
-  3: {"param" :"MU", "value" : "00"}, 
-  4: {"param" :"DT", "value" : "00"}, 
-  5: {"param" :"VO", "value" : "00"}, 
-  6: {"param" :"TR", "value" : "07"}, 
-  7: {"param" :"BS", "value" : "07"}, 
-  8: {"param" :"BL", "value" : "10"}, 
-  9: {"param" :"CH", "value" : "01"}, 
-  10: {"param" :"LS", "value" : "00"}, 
+PARAM_DEFAULT = {
+  "PA":"00",
+  "PR":"00",
+  "MU":"00",
+  "DT":"00",
+  "VO":"00",
+  "TR":"07",
+  "BS":"07",
+  "BL":"10",
+  "CH":"01",
+  "LS":"00"
 }
 
 # -------------------------------------------------------------------------------------------------
@@ -70,38 +71,52 @@ class Mpr6zhmautLine:
     """ 
     Construct the mpr6zhmaut line instance
     """
-    def __init__(self, lid, ldev='/dev/ttyUSB0', lnumamp='1'):
+    def __init__(self, id, dev='/dev/ttyUSB0', numamp='1'):
         """
         Create mpr6zhmaut line instance, allowing to use amp and zone
         Create a dict with all params for all amps and zones of the line
-        @lid : unique identifier of this line
-        @ldev : device where the interface is connected to
+        @id : unique identifier of this line
+        @dev : device where the interface is connected to
         default '/dev/ttyUSB0'
         @lnumamp : number of amp to handle on this line
         default '1'
         """
 
-        self.lid = lid
-        self.ldev = ldev
-        self.lnumamp = lnumamp
-        
+        self.id = id
+        self.dev = dev
+        self.numamp = int(numamp)
+
+        # Create the 3d dict [amp][zone][param] to store runing params
+        # https://stackoverflow.com/questions/12167192/pythonic-way-to-create-3d-dict
+        self.params = defaultdict(lambda: defaultdict(dict))
+        i = 1
+        j = 1
+        while i <= self.numamp:
+            while j <= 6:
+                for cle, valeur in PARAM_DEFAULT.items(): 
+                    self.params[i][j][cle] = valeur
+                j += 1
+            i += 1
+            j = 1
+
+
     def __str__(self):
         """
         Method used to print the ojbect class
         """
-        return "lid:{0}\nldev:{1}\nlnumamp:{2}".format(self.lid,self.ldev,self.lnumamp)
+        return "id:{0}\ndev:{1}\nnumamp:{2}".format(self.id,self.dev,self.numamp)
+
 
     def open(self, device):
         """
-        Open (opens the device once)
+        Open with serial.Serial the dev device
         """
         try:
-            #self._log.info(u"Try to open MPR6ZMAUT: %s" % device)
             self._ser = serial.Serial(device, 9600, timeout=1)
-            #self._log.info("MPR6ZMAUT: %s opened" % device)
         except:
-            error = "Error while opening Mpr6zmaut : %s. Check if it is the good device or if you have the good permissions on it." % device
+            error = "Error while opening device : %s." % device
             raise Mpr6zhmautException(error)
+
 
     def close(self):
         """
@@ -111,7 +126,7 @@ class Mpr6zhmautLine:
         try:
             self._ser.close()
         except:
-            error = "Error while closing device"
+            error = "Error while closing device : %s." % device
             raise Mpr6zhmautException(error)
 
 
@@ -132,57 +147,105 @@ class Mpr6zhmautLine:
                 break
         return bytes(line)
 
-    def get_zone(self, amp, zone):
+
+    def get_zone_all(self, amp, zone):
         """
-        Return a dict with the full params of an zone's amp
-        @param amp : the number of the amp to pull
-        @param zone : the number of the zone to pull
+        Pull all the parameters of an zone's amp and
+        update the dict params{}
+        @param amp : amp to pull
+        @param zone : zone to pull
         """
-        self._ser.write('?' + amp + zone + '\r\n')
+        try:
+        	self._ser.write('?' + amp + zone + '\r\n')
+        except:
+            error = "Error while closing device : %s." % device
+            raise Mpr6zhmautException(error)
+            
         rcv = self._readline(self._ser)
 	regex = '>' + amp + zone + '(.+?)\\r\\r\\n'
         reponse = re.search(regex, rcv).group(1)
-        zone = {}
-        zone["PA"] = reponse[0:2]
-        zone["PR"] = reponse[2:4]
-        zone["MU"] = reponse[4:6]
-        zone["DT"] = reponse[6:8]
-        zone["VO"] = reponse[8:10]
-        zone["TR"] = reponse[10:12]
-        zone["BS"] = reponse[12:14]
-        zone["BL"] = reponse[14:16]
-        zone["CH"] = reponse[16:18]
-        zone["LS"] = reponse[18:20]
-        return zone
+        amp, zone = int(amp), int(zone)
+        self.params[amp][zone]['PA'] = reponse[0:2]
+        self.params[amp][zone]['PR'] = reponse[2:4]
+        self.params[amp][zone]['MU'] = reponse[4:6]
+        self.params[amp][zone]['DT'] = reponse[6:8]
+        self.params[amp][zone]['VO'] = reponse[8:10]
+        self.params[amp][zone]['TR'] = reponse[10:12]
+        self.params[amp][zone]['BS'] = reponse[12:14]
+        self.params[amp][zone]['BL'] = reponse[14:16]
+        self.params[amp][zone]['CH'] = reponse[16:18]
+        self.params[amp][zone]['LS'] = reponse[18:20]
+        return self.params[amp][zone]
+
 
     def get_zone_param(self, amp, zone, param):
         """
-        Return the value of a parameter of a submitted zone
-        @param amp : amp to use
-        @param zone : zone to use
+        Pull one parameter of an zone's amp and 
+        update the dict params{}
+        @param amp : amp to pull
+        @param zone : zone to pull
         @param param : param to pull
         """
         try:
             self._ser.write('?' + amp + zone + param + '\r\n')
         except:
-            error = "Error while writing to mpr6zhmaut device"
+            error = "Error while closing device : %s." % device
             raise Mpr6zhmautException(error)
+
         rcv = self._readline(self._ser)
 	regex = '>' + amp + zone + param + '(.+?)\\r\\r\\n'
         reponse = re.search(regex, rcv).group(1)
-        return_param = {}
-        return_param[param] = reponse
-        return return_param
+        amp, zone = int(amp), int(zone)
+        self.params[amp][zone][param] = reponse
+        return self.params[amp][zone][param]
+
+
+    def get_amp_all(self, amp):
+        """
+        Update the dict params{} with all the param of an amp
+        @param amp : amp to pull
+        """
+        try:
+            self._ser.write('?' + amp + '0\r\n\n')
+        except:
+            error = "Error while closing device : %s." % device
+            raise Mpr6zhmautException(error)
+
+        rcv = self._readline(self._ser, eol=b'\r\r\n\n')
+	regex = '>' + amp + '[1-6]{1}(.+?)\\r\\r\\n'
+        # Return a list with all params of each zone in
+        # the right order
+        reponse = re.findall(regex, rcv)
+        i = 1
+        amp = int(amp)
+        for elt in reponse:
+            self.params[amp][i]['PA'] = elt[0:2]
+            self.params[amp][i]['PR'] = elt[2:4]
+            self.params[amp][i]['MU'] = elt[4:6]
+            self.params[amp][i]['DT'] = elt[6:8]
+            self.params[amp][i]['VO'] = elt[8:10]
+            self.params[amp][i]['TR'] = elt[10:12]
+            self.params[amp][i]['BS'] = elt[12:14]
+            self.params[amp][i]['BL'] = elt[14:16]
+            self.params[amp][i]['CH'] = elt[16:18]
+            self.params[amp][i]['LS'] = elt[18:20]
+            print(self.params[amp][i])
+            i += 1
+
 
     def set_zone_param(self, amp, zone, param, value):
         """
-        Set param on the zone
+        Set a param's value of and zone's amp and 
+        update the dict params{} with method get_zone_param
         """
         try:
             self._ser.write('<' + amp + zone + param + value + '\r\n')
         except:
-            error = "Error while writing to mpr6zhmaut device"
+            error = "Error while closing device : %s." % device
             raise Mpr6zhmautException(error)
+
+        # Finally, we update the params{} and return the updated data
+        return self.get_zone_param(amp, zone, param)
 
 # -------------------------------------------------------------------------------------------------
 class Mpr6zhmautAmp:
@@ -197,11 +260,11 @@ class Mpr6zhmautAmp:
         """
 
         self.line = line
-        self.lid = line.lid
+        self.id = line.id
         self.aid = aid
 
     def __str__(self):
         """
         Method used to print the ojbect class
         """
-        return "the_line.lid:{0}\naid:{1}".format(self.lid,self.aid)
+        return "the_line.id:{0}\naid:{1}".format(self.id,self.aid)
