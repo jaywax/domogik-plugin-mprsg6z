@@ -299,25 +299,3 @@ class Mpr6zhmautLine:
         # Finally, we update the params{} and return the updated data
         return self.getAllZoneOneParam(amp, param)
 
-
-# -------------------------------------------------------------------------------------------------
-class Mpr6zhmautAmp:
-    """
-    Construct the mpr6zhmaut amp from an object issued from the Mpr6zhmautLine class
-    """
-    def __init__(self, line, aid):
-        """
-        Create mpr6zhmaut amp instance, allowing to use zone and general parameters
-        @line : the serial line used for this amp
-        @aid : unique identifier of the amp
-        """
-
-        self.line = line
-        self.id = line.id
-        self.aid = aid
-
-    def __str__(self):
-        """
-        Method used to print the ojbect class
-        """
-        return "the_line.id:{0}\naid:{1}".format(self.id,self.aid)
