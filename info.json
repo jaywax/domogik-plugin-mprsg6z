@@ -1,0 +1,14 @@
+{ 
+    "json_version": 2,
+    
+    "products" : [], 
+    
+    "configuration": [        
+        {
+            "default": "/dev/ttyUSB0", 
+            "description": "Mprsg6z rs232 device", 
+            "key": "mprsg6z_device", 
+            "name": "Mprsg6z Device",
+            "required": "yes", 
+            "type": "string"
+        }, 
