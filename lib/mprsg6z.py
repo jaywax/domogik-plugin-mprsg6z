@@ -55,7 +55,7 @@ PARAM_DEFAULT = {
 # -------------------------------------------------------------------------------------------------
 class Mprsg6zException(Exception):
     """
-    MPR6ZHMAUT exception
+    Mprsg6z exception
     """
 
     def __init__(self, value):
@@ -67,16 +67,18 @@ class Mprsg6zException(Exception):
 
 # -------------------------------------------------------------------------------------------------
 class Mprsg6zVamp:
-    """ 
-    Construct the Mprsg6z Virtual Amp instance (all the physical amp on a single rs232 bus)
+    """
+    Create python object and methods to interact with rs232 amps
     """
     def __init__(self, log, name, sources, dev='/dev/ttyUSB0'):
         """
-        @log : log instance
-        @name : technical device name
-        @sources : dict with descrption of the 6 input channel 
-        @dev : device where the interface is connected to
-        default '/dev/ttyUSB0'
+        Construct the instance virtual amp
+
+        Keyword arguments:
+        log -- log instance ??
+        name -- technical device name present in domogik
+        sources -- dict with descrption of the 6 input channel 
+        dev -- rs232 device (default /dev/ttyUSB0)
         """
 
         self._log = log 
@@ -91,10 +93,12 @@ class Mprsg6zVamp:
 
         # initialize 2D dict to store running p_params
         self.p_params = {}
-        i = 1
-        j = 1
-        while i <= 3:
-            while j <= 6:
+        #i = 1
+        #j = 1
+        #while i <= 3:
+        for i in range(1, 4):
+            #while j <= 6:
+            for j in range(1, 7):
                 zone = str(i) + str(j)
                 self.p_params[zone] = {}
                 i, j = int(i), int(j)
@@ -102,14 +106,14 @@ class Mprsg6zVamp:
                     self.p_params[zone][cle] = valeur
                 self.p_params[zone]['slaveof'] = ""
                 self.p_params[zone]['slavenow'] = ""
-                j += 1
-            i += 1
-            j = 1
+                #j += 1
+            #i += 1
+            #j = 1
 
     # -------------------------------------------------------------------------------------------------
     def open(self):
         """
-        Open with serial.Serial the dev device
+        Method used to open the rs232 device with serial.Serial
         """
         try:
             self._ser = serial.Serial(self.dev, 9600, timeout=1)
@@ -120,7 +124,7 @@ class Mprsg6zVamp:
 
     def close(self):
         """
-        Close the open device
+        Method used to close the rs232 device with serial.Serial
         """
         try:
             self._ser.close()
@@ -131,9 +135,10 @@ class Mprsg6zVamp:
 
     def _readline(self, a_serial, eol=b'\r\r\n'):
         """
-        Method used to format the data return by the amp 
-        during status query
-        @param a_serial : the Serial.serial line
+        Format the data return by the amp during status query
+
+        Keyword arguments:
+        a_serial -- the Serial.serial line
         """
         leneol = len(eol)
         line = bytearray()
@@ -151,10 +156,12 @@ class Mprsg6zVamp:
     # -------------------------------------------------------------------------------------------------
     def getOneZoneOneParam(self, p_zone, param):
         """
-        Pull one parameter of a zone's amp
+        Return one param of one p_zone
         Update the dict p_params{} with it
-        @param p_zone : zone to pull
-        @param param : param to pull
+
+        Keyword arguments:
+        p_zone -- p_zone to pull
+        param -- param to pull
         """
         try:
             self._ser.write('?' + p_zone + param + '\r\n')
@@ -163,17 +170,19 @@ class Mprsg6zVamp:
             raise Mprsg6zException(error)
 
         rcv = self._readline(self._ser)
-	regex = '>' + p_zone + param + '(.+?)\\r\\r\\n'
-        reponse = re.search(regex, rcv).group(1)
+	regexp = '>' + p_zone + param + '(.+?)\\r\\r\\n'
+        reponse = re.search(regexp, rcv).group(1)
         self.p_params[p_zone][param] = reponse
         return self.p_params[p_zone][param]
 
 
     def getOneZoneAllParam(self, p_zone):
         """
-        Pull all the parameters of an zone's amp
+        Return all the params of one p_zone
         Update the dict p_params{} with it
-        @param p_zone : zone to pull
+
+        Keyword arguments:
+        p_zone -- zone to pull
         """
         try:
         	self._ser.write('?' + p_zone + '\r\n')
@@ -182,8 +191,8 @@ class Mprsg6zVamp:
             raise Mprsg6zException(error)
             
         rcv = self._readline(self._ser)
-	regex = '>' + p_zone + '(.+?)\\r\\r\\n'
-        reponse = re.search(regex, rcv).group(1)
+	regexp = '>' + p_zone + '(.+?)\\r\\r\\n'
+        reponse = re.search(regexp, rcv).group(1)
         self.p_params[p_zone]['PA'] = reponse[0:2]
         self.p_params[p_zone]['PR'] = reponse[2:4]
         self.p_params[p_zone]['MU'] = reponse[4:6]
@@ -199,10 +208,12 @@ class Mprsg6zVamp:
 
     def getAllZoneOneParam(self, p_amp, param):
         """
-        Pull the parameter on all zones of an amp
+        Return one param for all zone of an amp
         Update the dict p_params{} with it
-        @param p_amp : amp to pull
-        @param param : param to pull
+
+        Keyword arguments:
+        p_amp -- amp to pull
+        param -- param to pull
         """
         try:
             self._ser.write('?' + p_amp + '0' + param + '\r\n')
@@ -211,21 +222,24 @@ class Mprsg6zVamp:
             raise Mprsg6zException(error)
 
         rcv = self._readline(self._ser, eol=b'\r\r\n\n')
-	regex = '>' + p_amp + '[1-6]{1}[A-Z]{2}(.+?)\\r\\r\\n'
-        reponse = re.findall(regex, rcv)
-        i = 1
-        for elt in reponse:
-            zone = p_amp + str(i) 
+	regexp = '>' + p_amp + '[1-6]{1}[A-Z]{2}(.+?)\\r\\r\\n'
+        reponse = re.findall(regexp, rcv)
+        #i = 1
+        #for elt in reponse:
+        for idx, elt in enumerate(reponse):
+            zone = p_amp + str(idx) 
             self.p_params[zone][str(param)] = elt
             print(zone, param, elt)
-            i += 1
+            #i += 1
 
 
     def getAllZoneAllParam(self, p_amp):
         """
-        Pull all the amp's params
+        Return all zone's param on an amp
         Update the dict p_params{} with it
-        @param p_amp : amp to pull
+
+        Keyword arguments:
+        p_amp -- amp to pull
         """
         try:
             self._ser.write('?' + p_amp + '0\r\n\n')
@@ -234,10 +248,10 @@ class Mprsg6zVamp:
             raise Mprsg6zException(error)
 
         rcv = self._readline(self._ser, eol=b'\r\r\n\n')
-	regex = '>' + p_amp + '[1-6]{1}(.+?)\\r\\r\\n'
+	regexp = '>' + p_amp + '[1-6]{1}(.+?)\\r\\r\\n'
         # Return a list with all params of each zone in
         # the right order
-        reponse = re.findall(regex, rcv)
+        reponse = re.findall(regexp, rcv)
         i = 1
         for elt in reponse:
             zone = p_amp + str(i) 
@@ -257,19 +271,25 @@ class Mprsg6zVamp:
 
     def getVampAll(self):
         """
-        Pull all the params of the line
+        Return all the param of all zone of all amp
         Update the dict p_params{} with it
         """
-        i = 1
-        while i <= 3:
+        #i = 1
+        #while i <= 3:
+        for i in range(1, 4):
             self.getAllZoneAllParam(str(i))
-            i += 1
+            #i += 1
 
     # -------------------------------------------------------------------------------------------------
     def setOneZoneOneParam(self, p_zone, param, value):
         """
         Set a param's value of a zone's amp 
-        Update the dict p_params{} with method get_zone_param
+        Update the dict p_params{} via getOneZoneOneParam method
+
+        Keyword arguments:
+        p_zone -- the physical zone to set
+        param -- the param to set
+        value -- the value to set
         """
         try:
             self._ser.write('<' + p_zone + param + value + '\r\n')
@@ -284,6 +304,12 @@ class Mprsg6zVamp:
     def setAllZoneOneParam(self, p_amp, param, value):
         """
         Set a param's value on all zone of one amp
+        Update the dict p_params{} via getAllZoneOneParam method
+
+        Keyword arguments:
+        p_amp -- the physical amp where all zone will be set
+        param -- the param to set
+        value -- value to set
         """
         try:
             self._ser.write('<' + p_amp + '0' + param + value + '\r\n')
@@ -299,23 +325,24 @@ class Mprsg6zVzone():
     """ 
     Construct the Mprsg6z Virtual Zone instance
     """
-    def __init__(self, log, name, vamp_name):
+    def __init__(self, log, name, v_amp_obj, liste_childs):
         """
         @log : log instance
-        @name : technical device name
-        @vamp_name : technical name of the Mprsg6zVamp to use
+        @name : technical device name of the v_zone
+        @v_amp_obj : instance of the class Mpr6zVamp to use
         """
 
         self._log = log 
         self.name = name
-        self.vamp_name = vamp_name
+        self.v_amp_obj = v_amp_obj
 
         # initialize the dict to store running v_params
         self.v_params = {}
         for cle, valeur in PARAM_DEFAULT.items(): 
             self.v_params[cle] = valeur
-            self.v_params['childs'] = ""
-            self.v_params['useable'] = "false"
+        self.v_params['childs'] = liste_childs
+        self.v_params['useable'] = "false"
 
     def getInfos(self):
-        print(self.vamp_name.p_params)
+        for elt in self.v_params["childs"]:
+            print(self.v_amp_obj.p_params[elt])
