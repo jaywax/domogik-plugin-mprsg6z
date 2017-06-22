@@ -74,10 +74,9 @@ class Mprsg6zVamp:
         """
         @log : log instance
         @name : technical device name
-        input channel of a virtual amp
+        @sources : dict with descrption of the 6 input channel 
         @dev : device where the interface is connected to
         default '/dev/ttyUSB0'
-        @sources : dict with descrption of the 6 input channel 
         """
 
         self._log = log 
@@ -90,7 +89,7 @@ class Mprsg6zVamp:
         self.input5 = sources.get('input5')
         self.input6 = sources.get('input6')
 
-        # initialize 2D dict to store running params
+        # initialize 2D dict to store running p_params
         self.p_params = {}
         i = 1
         j = 1
@@ -101,6 +100,8 @@ class Mprsg6zVamp:
                 i, j = int(i), int(j)
                 for cle, valeur in PARAM_DEFAULT.items(): 
                     self.p_params[zone][cle] = valeur
+                self.p_params[zone]['slaveof'] = ""
+                self.p_params[zone]['slavenow'] = ""
                 j += 1
             i += 1
             j = 1
@@ -254,7 +255,7 @@ class Mprsg6zVamp:
             i += 1
 
 
-    def getLineParam(self):
+    def getVampAll(self):
         """
         Pull all the params of the line
         Update the dict p_params{} with it
@@ -263,6 +264,7 @@ class Mprsg6zVamp:
         while i <= 3:
             self.getAllZoneAllParam(str(i))
             i += 1
+
     # -------------------------------------------------------------------------------------------------
     def setOneZoneOneParam(self, p_zone, param, value):
         """
@@ -292,3 +294,28 @@ class Mprsg6zVamp:
         # Finally, we update the params{} and return the updated data
         return self.getAllZoneOneParam(p_amp, param)
 
+# -------------------------------------------------------------------------------------------------
+class Mprsg6zVzone():
+    """ 
+    Construct the Mprsg6z Virtual Zone instance
+    """
+    def __init__(self, log, name, vamp_name):
+        """
+        @log : log instance
+        @name : technical device name
+        @vamp_name : technical name of the Mprsg6zVamp to use
+        """
+
+        self._log = log 
+        self.name = name
+        self.vamp_name = vamp_name
+
+        # initialize the dict to store running v_params
+        self.v_params = {}
+        for cle, valeur in PARAM_DEFAULT.items(): 
+            self.v_params[cle] = valeur
+            self.v_params['childs'] = ""
+            self.v_params['useable'] = "false"
+
+    def getInfos(self):
+        print(self.vamp_name.p_params)
