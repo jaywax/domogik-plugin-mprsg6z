@@ -413,7 +413,7 @@ def threadVzone():
         if instance.v_amp_obj.p_params[first_pzone]['lockedby'] == instance.name:
 	    instance.v_params['status'] = "on"
 	# if this model is not locked, th v_zone should be available
-        elif instance.v_amp_obj.p_params[zone_temoin]['lockedby'] == '':
+        elif instance.v_amp_obj.p_params[first_pzone]['lockedby'] == '':
 	    instance.v_params['status'] = "available"
 	# else, the v_zone should be locked
 	else:
