@@ -93,22 +93,14 @@ class Mprsg6zVamp:
 
         # initialize 2D dict to store running p_params
         self.p_params = {}
-        #i = 1
-        #j = 1
-        #while i <= 3:
         for i in range(1, 4):
-            #while j <= 6:
             for j in range(1, 7):
                 zone = str(i) + str(j)
                 self.p_params[zone] = {}
-                i, j = int(i), int(j)
                 for cle, valeur in PARAM_DEFAULT.items(): 
                     self.p_params[zone][cle] = valeur
-                self.p_params[zone]['slaveof'] = ""
-                self.p_params[zone]['slavenow'] = ""
-                #j += 1
-            #i += 1
-            #j = 1
+                self.p_params[zone]['slaveof'] = []
+                self.p_params[zone]['lockedby'] = ""
 
     # -------------------------------------------------------------------------------------------------
     def open(self):
@@ -224,13 +216,12 @@ class Mprsg6zVamp:
         rcv = self._readline(self._ser, eol=b'\r\r\n\n')
 	regexp = '>' + p_amp + '[1-6]{1}[A-Z]{2}(.+?)\\r\\r\\n'
         reponse = re.findall(regexp, rcv)
-        #i = 1
-        #for elt in reponse:
-        for idx, elt in enumerate(reponse):
-            zone = p_amp + str(idx) 
+        i = 1
+        for elt in reponse:
+            zone = p_amp + str(i) 
             self.p_params[zone][str(param)] = elt
             print(zone, param, elt)
-            #i += 1
+            i += 1
 
 
     def getAllZoneAllParam(self, p_amp):
@@ -265,7 +256,6 @@ class Mprsg6zVamp:
             self.p_params[zone]['BL'] = elt[14:16]
             self.p_params[zone]['CH'] = elt[16:18]
             self.p_params[zone]['LS'] = elt[18:20]
-            print(self.p_params[zone])
             i += 1
 
 
@@ -274,11 +264,8 @@ class Mprsg6zVamp:
         Return all the param of all zone of all amp
         Update the dict p_params{} with it
         """
-        #i = 1
-        #while i <= 3:
         for i in range(1, 4):
             self.getAllZoneAllParam(str(i))
-            #i += 1
 
     # -------------------------------------------------------------------------------------------------
     def setOneZoneOneParam(self, p_zone, param, value):
@@ -288,7 +275,7 @@ class Mprsg6zVamp:
 
         Keyword arguments:
         p_zone -- the physical zone to set
-        param -- the param to set
+        Gparam -- the param to set
         value -- the value to set
         """
         try:
@@ -322,27 +309,145 @@ class Mprsg6zVamp:
 
 # -------------------------------------------------------------------------------------------------
 class Mprsg6zVzone():
-    """ 
-    Construct the Mprsg6z Virtual Zone instance
     """
-    def __init__(self, log, name, v_amp_obj, liste_childs):
+    Create python object and methods to interact with virtual zones
+
+    instances -- Variable of class to store created instances
+    """
+
+    instances = []
+
+    def __init__(self, log, name, v_amp_obj, childs):
         """
-        @log : log instance
-        @name : technical device name of the v_zone
-        @v_amp_obj : instance of the class Mpr6zVamp to use
+        Create an instance of v_zone to store parameters
+
+        Keyword arguments:
+        log -- log instance ??
+        name -- technical device name of the v_zone
+        v_amp_obj -- instance of the class Mpr6zVamp to use
+        childs -- list with p_zones to control
         """
 
         self._log = log 
         self.name = name
         self.v_amp_obj = v_amp_obj
-
+        self.childs = childs
+	Mprsg6zVzone.instances.append(self)
         # initialize the dict to store running v_params
         self.v_params = {}
-        for cle, valeur in PARAM_DEFAULT.items(): 
-            self.v_params[cle] = valeur
-        self.v_params['childs'] = liste_childs
-        self.v_params['useable'] = "false"
+        self.v_params['childs'] = childs
+        # at creation time, the v_zone is locked
+        self.v_params['status'] = "locked"
+        # update the param slaveof for all p_zone childs
+	# 
+	self.flag = ''
+        for child in self.v_params['childs']:
+            self.v_amp_obj.p_params[child]['slaveof'].append(self.name)
+	    self.flag = self.flag + self.v_amp_obj.p_params[child]['lockedby']
+        if not self.flag:
+            self.v_params['status'] = "available"
+            
+# -------------------------------------------------------------------------------------------------
+    def getVzoneOneParam(self, param):
+        """ 
+        Return one param of the first p_zone of childs v_zone
 
-    def getInfos(self):
-        for elt in self.v_params["childs"]:
-            print(self.v_amp_obj.p_params[elt])
+        Keyword arguments:
+        param -- param to pull
+        """
+
+        # return only the param of the first p_zone of the v_zone
+        value = self.v_amp_obj.p_params[self.v_params["childs"][0]][param]
+        return (param, value)
+
+    def getVzoneAllParam(self):
+        """ 
+        Return all param of the first p_zone of childs v_zone
+        """
+
+        # return only the params of the first p_zone of the v_zone
+        return(self.v_amp_obj.p_params[self.v_params["childs"][0]])
+# -------------------------------------------------------------------------------------------------
+    def setVzoneOneParam(self, param, value):
+        """
+        Set a param's value of the v_zone 
+
+        Keyword arguments:
+        param -- the param to set
+        value -- the value to set
+        """
+        
+        # if the v_zones is not locked (so on or available)
+        if not self.v_params['status'] == "locked" :
+            # in case of PR arg
+            if param == 'PR': 
+                # if we want to stand up a v_zone, we update the lockedby of each p_zone child
+                if value == '01':
+		    # if alredy on we do nothing
+		    if self.v_params['status'] == "available":
+                    	for child in self.v_params['childs']:
+                            self.v_amp_obj.setOneZoneOneParam(child,'PR','01')
+                            self.v_amp_obj.p_params[child]['lockedby'] = self.name
+		        self.v_params['status'] = "on"
+                # if we want to shut down a v_zone, we update the lockedby of each p_zone child
+		# and release them.
+		else:
+		    if self.v_params['status'] == "on":
+                        for child in self.v_params['childs']:
+                            self.v_amp_obj.setOneZoneOneParam(child,'PR','00')
+                            self.v_amp_obj.p_params[child]['lockedby'] = ''
+		        self.v_params['status'] = "available"
+	print("setVzoneOneParam :" + self.name + param + value)
+
+# -------------------------------------------------------------------------------------------------
+def threadVzone():
+    """
+    Thread function to update status of v_zone
+    """
+
+    # for all v_zones created
+    for instance in Mprsg6zVzone.instances:
+	# the first p_zone of v_zone is used as model
+        first_pzone = instance.v_params['childs'][0]
+	# if this model is locked by this v_zone, the v_zone should be on
+        if instance.v_amp_obj.p_params[first_pzone]['lockedby'] == instance.name:
+	    instance.v_params['status'] = "on"
+	# if this model is not locked, th v_zone should be available
+        elif instance.v_amp_obj.p_params[zone_temoin]['lockedby'] == '':
+	    instance.v_params['status'] = "available"
+	# else, the v_zone should be locked
+	else:
+	    instance.v_params['status'] = "locked"
+	print("treadVzone() :" + instance.name + " is " + instance.v_params['status'])
+
+
+
+
+if __name__ == "__main__":
+    sources = {'input1':'jay','input2':'sof','input3':'ylan','input4':'leny','input5':'fibre1','input6':'fibre2'}
+    myamp = Mprsg6zVamp('log', '1er ampli monoprice', sources)
+    myamp.open()
+    myamp.getVampAll()
+    childs = ['11']
+    myvzone1 = Mprsg6zVzone('log', 'Cuisine', myamp, childs)
+    threadVzone()
+    myvzone1.setVzoneOneParam("PR","01")
+    threadVzone()
+    print(myamp.getAllZoneAllParam('1'))
+    childs = ['11','12','13']
+    myvzone2 = Mprsg6zVzone('log', 'Cuisine|Salle à manger|Salon', myamp, childs)
+    threadVzone()
+    print(myamp.getAllZoneAllParam('1'))
+    myvzone2.setVzoneOneParam("PR","01")
+    threadVzone()
+    print(myamp.getAllZoneAllParam('1'))
+    myvzone1.setVzoneOneParam("PR","00")
+    threadVzone()
+    print(myamp.getAllZoneAllParam('1'))
+    myvzone2.setVzoneOneParam("PR","01")
+    threadVzone()
+    print(myamp.getAllZoneAllParam('1'))
+    myvzone2.setVzoneOneParam("PR","00")
+    threadVzone()
+    print(myamp.getAllZoneAllParam('1'))
+    myamp.close()
