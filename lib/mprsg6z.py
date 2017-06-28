@@ -346,9 +346,13 @@ class Mprsg6zVzone():
 	    self.flag = self.flag + self.v_amp_obj.p_params[child]['lockedby']
         if not self.flag:
             self.v_params['status'] = "available"
-	# the we update the others params (sensors of p_zone) of the v_zone
+	# then we update the others params (sensors of p_zone) of the v_zone
 	for cle, valeur in PARAM_DEFAULT.items():
             self.v_params[cle] = self.v_amp_obj.p_params[self.v_params["childs"][0]][cle]
+	# we update all the p_zone params and create an old v_params
+	# for MQ Usage comparaison 
+        self.v_amp_obj.getVampAll()
+	self.v_params_old = self.v_params.copy()
             
 # -------------------------------------------------------------------------------------------------
     def getVzoneOneParam(self, param):
@@ -360,8 +364,13 @@ class Mprsg6zVzone():
         """
 
         # return only the param of the first p_zone of the v_zone
-        value = self.v_amp_obj.p_params[self.v_params["childs"][0]][param]
-        return (param, value)
+	# if we want to know th CH parameter, we use the sources dict of
+	# the v_amp object
+	if param == "CH":
+	    return(param, self.v_amp_obj.sources[self.v_amp_obj.p_params[self.v_params["childs"][0]][param]])
+	else:
+            value = self.v_amp_obj.p_params[self.v_params["childs"][0]][param]
+            return(param, value)
 
     def getVzoneAllParam(self):
         """ 
@@ -408,7 +417,10 @@ class Mprsg6zVzone():
 	        if self.v_params['status'] == "on":
                     for child in self.v_params['childs']:
                         self.v_amp_obj.setOneZoneOneParam(child,param,value)
+		    self.v_params[param] = value
 		    
+	# We lauch an update thread
+	print(threadVzone())
 	return(self.name, param, value)
 
 # -------------------------------------------------------------------------------------------------
@@ -417,10 +429,10 @@ def threadVzone():
     Thread function to update status and sensors of v_zone
 
     Return :
-    var -- Dict of all v_zone v_params
+    var -- Dict with differences of all instances of v_zone
     """
 
-    # for all v_zones created
+    # dict created to send to MQ
     var = {}
     for instance in Mprsg6zVzone.instances:
 	# check if one of a p_zone child is lockedby 
@@ -440,10 +452,16 @@ def threadVzone():
 	    # else, the v_zone should be locked
 	    else:
 	        instance.v_params['status'] = "locked"
-	# then we update the others params of the vzone (the sensors of the first p_zone)
+	# then we update the others params of the vzone (copy the sensors of the first p_zone)
 	for cle, valeur in PARAM_DEFAULT.items():
             instance.v_params[cle] = instance.v_amp_obj.p_params[instance.v_params["childs"][0]][cle]
-	var[instance.name] = instance.v_params
+	#var[instance.name] = instance.v_params
+	diffparams = [(param+':'+instance.v_params[param]) for param in instance.v_params if instance.v_params[param] != instance.v_params_old[param]]
+	#for param in diffparams:
+	#    print instance.name,param, ':', instance.v_params_old[param], '->', instance.v_params[param]
+	instance.v_params_old = instance.v_params.copy()
+	if diffparams:
+	    var[instance.name] = diffparams
     return(var)
 
 # -------------------------------------------------------------------------------------------------
@@ -452,7 +470,6 @@ if __name__ == "__main__":
     sources = {'01':'jay','02':'sof','03':'ylan','04':'leny','05':'fibre1','06':'fibre2'}
     myamp = Mprsg6zVamp('log', '1er ampli monoprice', sources)
     myamp.open()
-    myamp.getVampAll()
     childs = ['11']
     cuisine = Mprsg6zVzone('log', 'Cuisine', myamp, childs)
     childs = ['12']
@@ -461,11 +478,12 @@ if __name__ == "__main__":
     salon = Mprsg6zVzone('log', 'Salon', myamp, childs)
     childs = ['11','12','13']
     bas = Mprsg6zVzone('log', 'Cuisine|Salle à manger|Salon', myamp, childs)
-    print(threadVzone())
     print(salon.setVzoneOneParam("PR","01"))
-    print(threadVzone())
+    print(salon.getVzoneOneParam('CH'))
+    print(salon.setVzoneOneParam("VO","01"))
     print(salon.setVzoneOneParam("VO","00"))
-    print(threadVzone())
+    print(cuisine.setVzoneOneParam("PR","01"))
+    print(cuisine.setVzoneOneParam("VO","01"))
     print(salon.setVzoneOneParam("PR","00"))
-    print(threadVzone())
+    print(cuisine.setVzoneOneParam("PR","00"))
     myamp.close()
