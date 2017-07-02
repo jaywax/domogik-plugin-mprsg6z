@@ -457,8 +457,6 @@ def threadVzone():
             instance.v_params[cle] = instance.v_amp_obj.p_params[instance.v_params["childs"][0]][cle]
 	#var[instance.name] = instance.v_params
 	diffparams = [(param+':'+instance.v_params[param]) for param in instance.v_params if instance.v_params[param] != instance.v_params_old[param]]
-	#for param in diffparams:
-	#    print instance.name,param, ':', instance.v_params_old[param], '->', instance.v_params[param]
 	instance.v_params_old = instance.v_params.copy()
 	if diffparams:
 	    var[instance.name] = diffparams
@@ -478,12 +476,6 @@ if __name__ == "__main__":
     salon = Mprsg6zVzone('log', 'Salon', myamp, childs)
     childs = ['11','12','13']
     bas = Mprsg6zVzone('log', 'Cuisine|Salle à manger|Salon', myamp, childs)
-    print(salon.setVzoneOneParam("PR","01"))
-    print(salon.getVzoneOneParam('CH'))
-    print(salon.setVzoneOneParam("VO","01"))
-    print(salon.setVzoneOneParam("VO","00"))
-    print(cuisine.setVzoneOneParam("PR","01"))
-    print(cuisine.setVzoneOneParam("VO","01"))
-    print(salon.setVzoneOneParam("PR","00"))
-    print(cuisine.setVzoneOneParam("PR","00"))
+    print(salle_a_manger.setVzoneOneParam("PR","01"))
+    print(salle_a_manger.setVzoneOneParam("PR","00"))
     myamp.close()
