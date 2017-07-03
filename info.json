@@ -79,35 +79,35 @@
                 }
            ]
         },
-        "pause": {
-           "name": "Send pause",
+        "mute": {
+           "name": "Send Mute",
            "return_confirmation": true,
            "parameters": [
                 {
-                    "key" : "current",
-                    "data_type" : "DT_Trigger",
-                    "conversion" : ""
+                    "key" : "switch",
+                    "data_type" : "DT_Switch",
+                    "conversion" : "from_DT_Switch_to_switch"
                 }
            ]
         },
-        "stop": {
-           "name": "Send stop",
+        "donotdisturb": {
+           "name": "Send Do Not Disturb",
            "return_confirmation": true,
            "parameters": [
                 {
-                    "key" : "current",
-                    "data_type" : "DT_Trigger",
-                    "conversion" : ""
+                    "key" : "switch",
+                    "data_type" : "DT_Switch",
+                    "conversion" : "from_DT_Switch_to_switch"
                 }
            ]
         },
-        "next": {
-           "name": "Send next",
+        "volume": {
+           "name": "Set Volume",
            "return_confirmation": true,
            "parameters": [
                 {
                     "key" : "current",
-                    "data_type" : "DT_Trigger",
+                    "data_type" : "DT_Scale",
                     "conversion" : ""
                 }
            ]
