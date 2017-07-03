@@ -70,21 +70,21 @@ class Mprsg6zVamp:
     """
     Create python object and methods to interact with rs232 amps
     """
-    def __init__(self, log, name, sources, dev='/dev/ttyUSB0'):
+    def __init__(self, log, name, channels, dev='/dev/ttyUSB0'):
         """
         Construct the instance virtual amp
 
         Keyword arguments:
         log -- log instance ??
         name -- technical device name present in domogik
-        sources -- dict with descrption of the 6 input channel 
+        channels -- dict with descrption of the 6 input channel 
         dev -- rs232 device (default /dev/ttyUSB0)
         """
 
         self._log = log 
         self.name = name
         self.dev = dev
-        self.sources = sources
+        self.channels = channels
 
         # initialize 2D dict to store running p_params
         self.p_params = {}
@@ -364,10 +364,10 @@ class Mprsg6zVzone():
         """
 
         # return only the param of the first p_zone of the v_zone
-	# if we want to know th CH parameter, we use the sources dict of
+	# if we want to know th CH parameter, we use the channels dict of
 	# the v_amp object
 	if param == "CH":
-	    return(param, self.v_amp_obj.sources[self.v_amp_obj.p_params[self.v_params["childs"][0]][param]])
+	    return(param, self.v_amp_obj.channels[self.v_amp_obj.p_params[self.v_params["childs"][0]][param]])
 	else:
             value = self.v_amp_obj.p_params[self.v_params["childs"][0]][param]
             return(param, value)
@@ -455,7 +455,6 @@ def threadVzone():
 	# then we update the others params of the vzone (copy the sensors of the first p_zone)
 	for cle, valeur in PARAM_DEFAULT.items():
             instance.v_params[cle] = instance.v_amp_obj.p_params[instance.v_params["childs"][0]][cle]
-	#var[instance.name] = instance.v_params
 	diffparams = [(param+':'+instance.v_params[param]) for param in instance.v_params if instance.v_params[param] != instance.v_params_old[param]]
 	instance.v_params_old = instance.v_params.copy()
 	if diffparams:
@@ -465,8 +464,8 @@ def threadVzone():
 # -------------------------------------------------------------------------------------------------
 # Only for test purpose
 if __name__ == "__main__":
-    sources = {'01':'jay','02':'sof','03':'ylan','04':'leny','05':'fibre1','06':'fibre2'}
-    myamp = Mprsg6zVamp('log', '1er ampli monoprice', sources)
+    channels = {'01':'jay','02':'sof','03':'ylan','04':'leny','05':'fibre1','06':'fibre2'}
+    myamp = Mprsg6zVamp('log', '1er ampli monoprice', channels)
     myamp.open()
     childs = ['11']
     cuisine = Mprsg6zVzone('log', 'Cuisine', myamp, childs)

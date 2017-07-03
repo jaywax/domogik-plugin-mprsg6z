@@ -1,14 +1,335 @@
-{ 
+{
+    "configuration": [],
+    "device_types": {
+        "mprsg6z.vamp": {
+            "id": "mprsg6z.vamp",
+            "description": "Mpr-Sg6z Virtual Amplifier",
+            "name": "Virtual Amp",
+            "sensors": ["channels"],
+            "parameters": [
+                {
+		    "default": "My Vamp",
+                    "key": "name",
+		    "name": "Name",
+                    "xpl": false,
+                    "description": "The Mprsg6z name of the device",
+		    "required": "yes",
+                    "type": "string"
+                },
+                {
+		    "default": "/dev/ttyUSB0",
+                    "key": "device",
+		    "name": "Device",
+                    "xpl": false,
+                    "description": "Serial bus to use to connect to the virtual Amp",
+		    "required": "yes",
+                    "type": "string"
+                }
+            ]
+        },
+        "mprsg6z.vzone": {
+            "id": "mprsg6z.vzone",
+            "description": "Mpr-Sg6z Virtual Zone",
+            "name": "Virtual Zone",
+            "commands": ["status", "mute", "donotdisturb", "volume", "treble", "bass", "balance", "channel"],
+            "sensors": ["status", "mute", "donotdisturb", "volume", "treble", "bass", "balance", "channel"],
+            "parameters": [
+                {
+		    "default": "My Vzone",
+                    "key": "name",
+		    "name": "Name",
+                    "xpl": false,
+                    "description": "The name of a vzone",
+		    "required": "yes",
+                    "type": "string"
+                },
+                {
+		    "default": "11",
+                    "key": "childs",
+		    "name": "Childs",
+                    "xpl": false,
+                    "description": "Childs physical zone of a vamp. Must be separated by a coma, example : 11, 12, 13",
+		    "required": "yes",
+                    "type": "string"
+                }
+            ]
+        }
+    },
+    "identity": {
+        "name": "Mprsg6z",
+        "author": "jaywax",
+        "author_email": "jaywax.2.bourbon at gmail dot com",
+        "dependencies": [],
+        "description": "MPR-SG6Z (MPR-6ZHMAUT) monoprice interface",
+        "domogik_min_version": "0.5.2",
+        "type": "plugin",
+        "version": "0.1",
+        "tags": ["multiroom", "multizone", "sound", "music"]
+    },
     "json_version": 2,
-    
-    "products" : [], 
-    
-    "configuration": [        
-        {
-            "default": "/dev/ttyUSB0", 
-            "description": "Mprsg6z rs232 device", 
-            "key": "mprsg6z_device", 
-            "name": "Mprsg6z Device",
-            "required": "yes", 
-            "type": "string"
-        }, 
+    "commands": {
+        "status": {
+           "name": "status",
+           "return_confirmation": true,
+           "parameters": [
+                {
+                    "key" : "current",
+                    "data_type" : "DT_Trigger",
+                    "conversion" : ""
+                }
+           ]
+        },
+        "pause": {
+           "name": "Send pause",
+           "return_confirmation": true,
+           "parameters": [
+                {
+                    "key" : "current",
+                    "data_type" : "DT_Trigger",
+                    "conversion" : ""
+                }
+           ]
+        },
+        "stop": {
+           "name": "Send stop",
+           "return_confirmation": true,
+           "parameters": [
+                {
+                    "key" : "current",
+                    "data_type" : "DT_Trigger",
+                    "conversion" : ""
+                }
+           ]
+        },
+        "next": {
+           "name": "Send next",
+           "return_confirmation": true,
+           "parameters": [
+                {
+                    "key" : "current",
+                    "data_type" : "DT_Trigger",
+                    "conversion" : ""
+                }
+           ]
+        },
+        "previous": {
+           "name": "Send previous",
+           "return_confirmation": true,
+           "parameters": [
+                {
+                    "key" : "current",
+                    "data_type" : "DT_Trigger",
+                    "conversion" : ""
+                }
+           ]
+        },
+        "voldown": {
+           "name": "Send vol down",
+           "return_confirmation": true,
+           "parameters": [
+                {
+                    "key" : "current",
+                    "data_type" : "DT_Trigger",
+                    "conversion" : ""
+                }
+           ]
+        },
+        "volup": {
+           "name": "Send vol up",
+           "return_confirmation": true,
+           "parameters": [
+                {
+                    "key" : "current",
+                    "data_type" : "DT_Trigger",
+                    "conversion" : ""
+                }
+           ]
+        },
+        "mute": {
+           "name": "Toggle mute",
+           "return_confirmation": true,
+           "parameters": [
+                {
+                    "key" : "current",
+                    "data_type" : "DT_Trigger",
+                    "conversion" : ""
+                }
+           ]
+        } 
+    },
+    "xpl_commands": {},
+    "xpl_stats": {},
+    "sensors": {
+        "volume": {
+            "name": "Volume",
+            "data_type": "DT_Number",
+            "conversion": "",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max": 0,
+                "expire": 0,
+                "round_value": 0
+	    }
+        },
+        "bass": {
+            "name": "Bass",
+            "data_type": "DT_Number",
+            "conversion": "",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max": 0,
+                "expire": 0,
+                "round_value": 0
+	    }
+        },
+        "treble": {
+            "name": "Treble",
+            "data_type": "DT_Number",
+            "conversion": "",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max": 0,
+                "expire": 0,
+                "round_value": 0
+	    }
+        },
+        "loudness": {
+            "name": "Loudness",
+            "data_type": "DT_Enable",
+            "conversion": "",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max": 0,
+                "expire": 0,
+                "round_value": 0
+            }
+        },
+        "state": {
+            "name": "State",
+            "data_type": "DT_String",
+            "conversion": "",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max": 0,
+                "expire": 0,
+                "round_value": 0
+            }
+        },
+        "play_mode": {
+            "name": "Play Mode",
+            "data_type": "DT_String",
+            "conversion": "",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max": 0,
+                "expire": 0,
+                "round_value": 0
+            }
+        },
+        "current_title": {
+            "name": "Current Title",
+            "data_type": "DT_String",
+            "conversion": "",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max": 0,
+                "expire": 0,
+                "round_value": 0
+            }
+        },
+        "current_album": {
+            "name": "Current Album",
+            "data_type": "DT_String",
+            "conversion": "",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max": 0,
+                "expire": 0,
+                "round_value": 0
+            }
+        },
+        "current_creator": {
+            "name": "Current Creator",
+            "data_type": "DT_String",
+            "conversion": "",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max": 0,
+                "expire": 0,
+                "round_value": 0
+            }
+        },
+        "current_stream": {
+            "name": "Current Stream",
+            "data_type": "DT_String",
+            "conversion": "",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max": 0,
+                "expire": 0,
+                "round_value": 0
+            }
+        },
+        "current_radio_show": {
+            "name": "Current Radio Show",
+            "data_type": "DT_String",
+            "conversion": "",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max": 0,
+                "expire": 0,
+                "round_value": 0
+            }
+
+        },
+        "current_duration": {
+            "name": "Current Duration",
+            "data_type": "DT_Time",
+            "conversion": "",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max": 0,
+                "expire": 0,
+                "round_value": 0
+            }
+
+        }
+    }
+}
+
