@@ -28,20 +28,17 @@ n°2  2		  1 to 6	21,22,23,24,25,26
 n°3  3		  1 to 6	31,32,33,34,35,36
 ==== ============ ============= ======================
  
-Each **Virtual Amp** is composed of **Virtual Zone** gathering one or several **Physical zones**.
+Each **Virtual Amp (Vamp)** is composed of **Virtual Zone (Vzone)** gathering one or several **Physical zones**.
 
-The following parameters are available on **Virtual Zone** (sensor/command) :
+The following parameters are available for a **Vzone** (sensor/command) :
 
 ========= ================================= ============ ===============================================
 Parameter Function                          Type         Description
 ========= ================================= ============ ===============================================
-State     Switch on or off the Virtual Zone DT_TriSwitch A Virtual zone can be in 3 differents states : 
--------- --------------------------------- ------------	 ----------------------------------------------
-                                                         - Available (off) : Can be switch on
--------- --------------------------------- ------------	 ----------------------------------------------
-							 - On 		   : Can be switch off
--------- --------------------------------- ------------	 ----------------------------------------------
-							 - Locked 	   : Can't be switch on of off
+State     Switch on/off the Vzone           DT_TriSwitch A Virtual zone can be in 3 differents states : 
+                                                         Available (off), On or Locked
+--------  --------------------------------- ------------ -----------------------------------------------
+Mute      Switch on/off to mute the Vzone   DT_Switch	 On : The Vzone is muted. Off the Vzone isn't muted. 
 ========= ================================= ============ ===============================================
 
 
