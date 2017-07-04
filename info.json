@@ -56,7 +56,7 @@
         }
     },
     "identity": {
-        "name": "Mprsg6z",
+        "name": "mprsg6z",
         "author": "jaywax",
         "author_email": "jaywax.2.bourbon at gmail dot com",
         "dependencies": [],
@@ -160,9 +160,9 @@
     "xpl_commands": {},
     "xpl_stats": {},
     "sensors": {
-        "volume": {
-            "name": "Volume",
-            "data_type": "DT_Number",
+        "status": {
+            "name": "Status",
+            "data_type": "DT_Bool",
             "conversion": "",
             "incremental": false,
             "timeout": 0,
@@ -174,10 +174,10 @@
                 "round_value": 0
 	    }
         },
-        "bass": {
-            "name": "Bass",
-            "data_type": "DT_Number",
-            "conversion": "",
+        "mute": {
+            "name": "Mute",
+            "data_type": "DT_Switch",
+            "conversion": "from_switch_to_DT_Switch",
             "incremental": false,
             "timeout": 0,
             "history": {
@@ -187,25 +187,67 @@
                 "expire": 0,
                 "round_value": 0
 	    }
+        },
+        "donotdisturb": {
+            "name": "Do Not Disturb",
+            "data_type": "DT_Switch",
+            "conversion": "from_switch_to_DT_Switch",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max": 0,
+                "expire": 0,
+                "round_value": 0
+	    }
+        },
+        "volume": {
+            "name": "Volume",
+            "data_type": "DT_Scale",
+            "conversion": "from_volume_to_DT_Scale",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max": 0,
+                "expire": 0,
+                "round_value": 0
+            }
         },
         "treble": {
             "name": "Treble",
+            "data_type": "DT_Scale",
+            "conversion": "from_treble_bass_to_DT_Scale",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max": 0,
+                "expire": 0,
+                "round_value": 0
+            }
+        },
+        "bass": {
+            "name": "Bass",
+            "data_type": "DT_Scale",
+            "conversion": "from_treble_bass_to_DT_Scale",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max": 0,
+                "expire": 0,
+                "round_value": 0
+            }
+        },
+        "balance": {
+            "name": "Balance",
             "data_type": "DT_Number",
-            "conversion": "",
-            "incremental": false,
-            "timeout": 0,
-            "history": {
-                "store": true,
-                "duplicate": false,
-                "max": 0,
-                "expire": 0,
-                "round_value": 0
-	    }
-        },
-        "loudness": {
-            "name": "Loudness",
-            "data_type": "DT_Enable",
-            "conversion": "",
+            "conversion": "from_balance_to_DT_Number",
             "incremental": false,
             "timeout": 0,
             "history": {
@@ -216,10 +258,10 @@
                 "round_value": 0
             }
         },
-        "state": {
-            "name": "State",
-            "data_type": "DT_String",
-            "conversion": "",
+        "channel": {
+            "name": "Channel",
+            "data_type": "DT_Number",
+            "conversion": "from_channel_to_DT_Number",
             "incremental": false,
             "timeout": 0,
             "history": {
@@ -229,106 +271,6 @@
                 "expire": 0,
                 "round_value": 0
             }
-        },
-        "play_mode": {
-            "name": "Play Mode",
-            "data_type": "DT_String",
-            "conversion": "",
-            "incremental": false,
-            "timeout": 0,
-            "history": {
-                "store": true,
-                "duplicate": false,
-                "max": 0,
-                "expire": 0,
-                "round_value": 0
-            }
-        },
-        "current_title": {
-            "name": "Current Title",
-            "data_type": "DT_String",
-            "conversion": "",
-            "incremental": false,
-            "timeout": 0,
-            "history": {
-                "store": true,
-                "duplicate": false,
-                "max": 0,
-                "expire": 0,
-                "round_value": 0
-            }
-        },
-        "current_album": {
-            "name": "Current Album",
-            "data_type": "DT_String",
-            "conversion": "",
-            "incremental": false,
-            "timeout": 0,
-            "history": {
-                "store": true,
-                "duplicate": false,
-                "max": 0,
-                "expire": 0,
-                "round_value": 0
-            }
-        },
-        "current_creator": {
-            "name": "Current Creator",
-            "data_type": "DT_String",
-            "conversion": "",
-            "incremental": false,
-            "timeout": 0,
-            "history": {
-                "store": true,
-                "duplicate": false,
-                "max": 0,
-                "expire": 0,
-                "round_value": 0
-            }
-        },
-        "current_stream": {
-            "name": "Current Stream",
-            "data_type": "DT_String",
-            "conversion": "",
-            "incremental": false,
-            "timeout": 0,
-            "history": {
-                "store": true,
-                "duplicate": false,
-                "max": 0,
-                "expire": 0,
-                "round_value": 0
-            }
-        },
-        "current_radio_show": {
-            "name": "Current Radio Show",
-            "data_type": "DT_String",
-            "conversion": "",
-            "incremental": false,
-            "timeout": 0,
-            "history": {
-                "store": true,
-                "duplicate": false,
-                "max": 0,
-                "expire": 0,
-                "round_value": 0
-            }
-
-        },
-        "current_duration": {
-            "name": "Current Duration",
-            "data_type": "DT_Time",
-            "conversion": "",
-            "incremental": false,
-            "timeout": 0,
-            "history": {
-                "store": true,
-                "duplicate": false,
-                "max": 0,
-                "expire": 0,
-                "round_value": 0
-            }
-
         }
     }
 }
