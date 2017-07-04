@@ -15,7 +15,15 @@ Each **Virtual Amp** is composed of **Virtual Zone** gathering several **Physica
 
 This is a no xPL plugin, sensor value are update by **0mq messages**
 
-The following parameters, which are available on MPR-6ZHMAUT are also available on **Virtual Zone** :
+The following parameters, which are available on MPR-6ZHMAUT are also available on **Virtual Zone** (sensor/command) :
+
+===================== =========================== ===========================
+Parameter             Description
+===================== =========================== ===========================
+Power Control         Reflect the state of a Virtual Zone 
+--------------------- --------------------------- ---------------------------
+key2                  datatype                   
+===================== =========================== ===========================
 
 
 
