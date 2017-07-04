@@ -17,13 +17,13 @@ This is a no xPL plugin, sensor value are update by **0mq messages**
 
 The following parameters, which are available on MPR-6ZHMAUT are also available on **Virtual Zone** (sensor/command) :
 
-===================== =========================== ===========================
-Parameter             Description
-===================== =========================== ===========================
-Power Control         Reflect the state of a Virtual Zone 
---------------------- --------------------------- ---------------------------
-key2                  datatype                   
-===================== =========================== ===========================
+===================================== =====================================
+Parameter                             Description
+===================================== =====================================
+Power Control                         Use to power Up or power Down a zone
+------------------------------------- -------------------------------------
+Mute Control			      
+===================================== =====================================
 
 
 
