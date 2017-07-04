@@ -5,6 +5,7 @@
             "id": "mprsg6z.vamp",
             "description": "Mpr-Sg6z Virtual Amplifier",
             "name": "Virtual Amp",
+	    "commands": [],
             "sensors": ["channels"],
             "parameters": [
                 {
