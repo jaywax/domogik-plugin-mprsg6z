@@ -4,6 +4,12 @@
 Plugin mprsg6z
 ===================
 
+
+.. |icon| image:: ../design/icon.png
+    :width: 64px
+
+|icon|
+
 Purpose
 =======
 
@@ -38,7 +44,8 @@ Parameter Function                          Type         Description
 State     Switch on/off the Vzone           DT_TriSwitch A Virtual zone can be in 3 differents states : 
                                                          Available (off), On or Locked
 --------  --------------------------------- ------------ -----------------------------------------------
-Mute      Switch on/off to mute the Vzone   DT_Switch	 On : The Vzone is muted. Off the Vzone isn't muted. 
+Mute      Switch on/off to mute the Vzone   DT_Switch	 On : The Vzone is muted. 
+							 Off: The Vzone is unmuted. 
 ========= ================================= ============ ===============================================
 
 
