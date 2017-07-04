@@ -36,8 +36,11 @@ The following parameters are available on **Virtual Zone** (sensor/command) :
 Parameter Function                          Type         Description
 ========= ================================= ============ ===============================================
 State     Switch on or off the Virtual Zone DT_TriSwitch A Virtual zone can be in 3 differents states : 
+-------- --------------------------------- ------------	 ----------------------------------------------
                                                          - Available (off) : Can be switch on
+-------- --------------------------------- ------------	 ----------------------------------------------
 							 - On 		   : Can be switch off
+-------- --------------------------------- ------------	 ----------------------------------------------
 							 - Locked 	   : Can't be switch on of off
 ========= ================================= ============ ===============================================
 
