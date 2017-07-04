@@ -7,36 +7,38 @@ Plugin mprsg6z
 Purpose
 =======
 
+This is a no xPL plugin, sensor value are update by **0mq messages**
+
 This plugin allows you to use the Monoprice Amp Multizone MPR-6ZHMAUT (https://www.monoprice.com/product?p_id=10761)
 with Domogik and rs232 protocol's commands.
 
-The concept of **Virtual Amp** and **Virtual Zone** are used to provide a more flexible use of the Amp(s):
+The concept of devices **Virtual Amp** and **Virtual Zone** are used to provide a more flexible use of the Amp(s):
 
 A **Virtual Amp** is the grouping of 1 to 3 Amp (if connected together with 18-pin ribbon cable) accessible 
 by the same rs232 connector. Each **Amp** on this same rs232 connector is numbered from 1 to 3 and 
-each **Pysical zone** is numbered from 1 to 6:
+each **Physical zone** is numbered from 1 to 6:
 
 ==== ============ ============= ======================
 Amp  Amp's Number Physical Zone Physical Zone's Number
 ==== ============ ============= ======================
-1    1		  First Zone	11
+n°1  1		  1 to 6	11,12,13,14,15,16
 ---- ------------ ------------- ----------------------
-1    1		  Second Zone	12
+n°2  2		  1 to 6	21,22,23,24,25,26
+---- ------------ ------------- ----------------------
+n°3  3		  1 to 6	31,32,33,34,35,36
 ==== ============ ============= ======================
  
-Each **Virtual Amp** is composed of **Virtual Zone** gathering several **Physical zones** of the Amp.
+Each **Virtual Amp** is composed of **Virtual Zone** gathering one or several **Physical zones**.
 
-This is a no xPL plugin, sensor value are update by **0mq messages**
+The following parameters are available on **Virtual Zone** (sensor/command) :
 
-The following parameters, which are available on MPR-6ZHMAUT are also available on **Virtual Zone** (sensor/command) :
+========= ================================= ========== ===========
+Parameter Function                          Type       Description
+========= ================================= ========== ===========
+State     Switch on or off the Virtual Zone DT_Switch
+========= ================================= ========== ===========
 
-===================================== =====================================
-Parameter                             Description
-===================================== =====================================
-Power Control                         Use to power Up or power Down a zone
-------------------------------------- -------------------------------------
-Mute Control			      
-===================================== =====================================
+
 
 
 
