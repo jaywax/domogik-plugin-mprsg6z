@@ -69,11 +69,11 @@
     "json_version": 2,
     "commands": {
         "status": {
-           "name": "status",
+           "name": "Send Status",
            "return_confirmation": true,
            "parameters": [
                 {
-                    "key" : "current",
+                    "key" : "status",
                     "data_type" : "DT_Trigger",
                     "conversion" : ""
                 }
@@ -102,57 +102,57 @@
            ]
         },
         "volume": {
-           "name": "Set Volume",
+           "name": "Send Volume Level",
            "return_confirmation": true,
            "parameters": [
                 {
-                    "key" : "current",
+                    "key" : "volume",
                     "data_type" : "DT_Scale",
-                    "conversion" : ""
+                    "conversion" : "from_DT_Scale_to_volume"
                 }
            ]
         },
-        "previous": {
-           "name": "Send previous",
+        "treble": {
+           "name": "Send Treble Level",
            "return_confirmation": true,
            "parameters": [
                 {
-                    "key" : "current",
-                    "data_type" : "DT_Trigger",
-                    "conversion" : ""
+                    "key" : "treble",
+                    "data_type" : "DT_Scale",
+                    "conversion" : "from_DT_Scale_to_treble_bass"
                 }
            ]
         },
-        "voldown": {
-           "name": "Send vol down",
+        "bass": {
+           "name": "Send Bass Level",
            "return_confirmation": true,
            "parameters": [
                 {
-                    "key" : "current",
-                    "data_type" : "DT_Trigger",
-                    "conversion" : ""
+                    "key" : "bass",
+                    "data_type" : "DT_Scale",
+                    "conversion" : "from_DT_Scale_to_treble_bass"
                 }
            ]
         },
-        "volup": {
-           "name": "Send vol up",
+        "balance": {
+           "name": "Send Balance Level",
            "return_confirmation": true,
            "parameters": [
                 {
-                    "key" : "current",
-                    "data_type" : "DT_Trigger",
-                    "conversion" : ""
+                    "key" : "balance",
+                    "data_type" : "DT_Number",
+                    "conversion" : "from_DT_Number_to_balance"
                 }
            ]
         },
-        "mute": {
-           "name": "Toggle mute",
+        "channel": {
+           "name": "Send Channel Input",
            "return_confirmation": true,
            "parameters": [
                 {
-                    "key" : "current",
-                    "data_type" : "DT_Trigger",
-                    "conversion" : ""
+                    "key" : "channel",
+                    "data_type" : "DT_Number",
+                    "conversion" : "from_DT_Number_to_channel"
                 }
            ]
         } 

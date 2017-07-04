@@ -426,7 +426,7 @@ class Mprsg6zVzone():
 # -------------------------------------------------------------------------------------------------
 def threadVzone():
     """
-    Thread function to update status and sensors of v_zone
+    Thread function to update sensors of v_zone
 
     Return :
     var -- Dict with differences of all instances of v_zone
@@ -476,5 +476,7 @@ if __name__ == "__main__":
     childs = ['11','12','13']
     bas = Mprsg6zVzone('log', 'Cuisine|Salle à manger|Salon', myamp, childs)
     print(salle_a_manger.setVzoneOneParam("PR","01"))
+    print(salle_a_manger.setVzoneOneParam("CH","02"))
+    print(salle_a_manger.setVzoneOneParam("CH","01"))
     print(salle_a_manger.setVzoneOneParam("PR","00"))
     myamp.close()
