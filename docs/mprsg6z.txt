@@ -13,7 +13,7 @@ Plugin mprsg6z
 Purpose
 =======
 
-This plugin allows you to use the `Link Monoprice Amp Multizone MPR-6ZHMAUT <https://www.monoprice.com/product?p_id=10761>`_
+This plugin allows you to use the `Monoprice Amp Multizone MPR-6ZHMAUT <https://www.monoprice.com/product?p_id=10761>`_
 with Domogik and rs232 protocol's commands.
 
 The concept of devices **Virtual Amp (Vamp)** and **Virtual Zone (Vzone)** are used to provide a more flexible use of the **Physical Amp(s)**.
