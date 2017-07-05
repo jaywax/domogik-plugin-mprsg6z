@@ -41,6 +41,7 @@ parameters are available (sensor/command) :
 |Parameter|Function                          |Description								   |
 +=========+==================================+=============================================================================+
 |State    |Switch on/off the Vzone           |Vzone can be in 3 differents states : 					   |
+|	  |				     |								   		   |		
 |	  |				     |* Available (off)								   |		
 |         |                                  |* On 									   |
 |         |                                  |* Locked									   |
