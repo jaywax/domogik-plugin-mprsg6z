@@ -34,16 +34,16 @@ n°2  2		  1 to 6	21,22,23,24,25,26
 n°3  3		  1 to 6	31,32,33,34,35,36
 ==== ============ ============= ======================
  
-Each **Vamp** is composed of **Vzone** gathering one or several **Physical zones** and the following
+Each **Vamp** is composed of **Vzone** gathering one or several **Physical zones** for which the following
 parameters are available (sensor/command) :
 
-========= ================================= ============ ==============================================================================
-Parameter Function                          Type         Description
-========= ================================= ============ ==============================================================================
-State     Switch on/off the Vzone           DT_TriSwitch A Virtual zone can be in 3 differents states : Available (off), On or Locked
---------  --------------------------------- ------------ -----------------------------------------------------------------------------
-Mute      Switch on/off to mute the Vzone   DT_Switch	 On : The Vzone is muted.Off: The Vzone is unmuted. 
-========= ================================= ============ ==============================================================================
+========== ================================= ==============================================================================
+Parameter  Function                          Description
+========== ================================= ==============================================================================
+State      Switch on/off the Vzone           Virtual zone can be in 3 differents states : Available (off), On or Locked
+---------- --------------------------------- -----------------------------------------------------------------------------
+Mute       Switch on/off to mute the Vzone   On : The Vzone is muted.Off: The Vzone is unmuted. 
+========== ================================= ==============================================================================
 
 
 Dependencies
