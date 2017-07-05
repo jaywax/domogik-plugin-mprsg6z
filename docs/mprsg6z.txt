@@ -41,12 +41,12 @@ parameters are available (sensor/command) :
 |Parameter|Function                          |Description								   |
 +=========+==================================+=============================================================================+
 |State    |Switch on/off the Vzone           |Vzone can be in 3 differents states : 					   |
-|	  |				     |- Available (off)								   |		
-|         |                                  |- On 									   |
-|         |                                  |- Locked									   |
+|	  |				     |* Available (off)								   |		
+|         |                                  |* On 									   |
+|         |                                  |* Locked									   |
 +---------+----------------------------------+-----------------------------------------------------------------------------+
-|Mute     |Switch on/off to mute the Vzone   |-On : The Vzone is muted							   |
-|	  |				     |-Off: The Vzone is unmuted						   |
+|Mute     |Switch on/off to mute the Vzone   |* On : The Vzone is muted							   |
+|	  |				     |* Off: The Vzone is unmuted						   |
 +---------+----------------------------------+-----------------------------------------------------------------------------+
 
 Dependencies
