@@ -85,13 +85,37 @@ Key                   Type                        Description
 name                  DT_String                   Technical name of the Vamp
 --------------------- --------------------------- ----------------------------------------------------------------------
 device                DT_String			  The rs232 device where the Physical Amp are connected to (default : /dev/ttyUSB0)
+--------------------- --------------------------- ----------------------------------------------------------------------
+channel1              DT_String			  Description of the channel 1 of the Physical Amp (default : channel1)
+--------------------- --------------------------- ----------------------------------------------------------------------
+channel2              DT_String			  Description of the channel 2 of the Physical Amp (default : channel2)
+--------------------- --------------------------- ----------------------------------------------------------------------
+channel3              DT_String			  Description of the channel 3 of the Physical Amp (default : channel3)
+--------------------- --------------------------- ----------------------------------------------------------------------
+channel4              DT_String			  Description of the channel 4 of the Physical Amp (default : channel4)
+--------------------- --------------------------- ----------------------------------------------------------------------
+channel5              DT_String			  Description of the channel 5 of the Physical Amp (default : channel5)
+--------------------- --------------------------- ----------------------------------------------------------------------
+channel6              DT_String			  Description of the channel 6 of the Physical Amp (default : channel6)
 ===================== =========================== ======================================================================
+
+You can now create a **Vzone** device :
+
+===================== =========================== ======================================================================
+Key                   Type                        Description
+===================== =========================== ======================================================================
+name                  DT_String                   Technical name of the Vzone
+--------------------- --------------------------- ----------------------------------------------------------------------
+vamp                  DT_String                   Technical name of the Vamp 
+--------------------- --------------------------- ----------------------------------------------------------------------
+childs                DT_String                   Childs Physical zone separated by comma (example : "11,13,22")
+--------------------- --------------------------- ----------------------------------------------------------------------
 
 
 Start the plugin
-================
+=======t=========
 
-You can now start the plugin (start button) and use the created devices.
+You can now start the 
 
 Set up your widgets on the user interface
 =========================================
