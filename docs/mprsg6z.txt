@@ -77,15 +77,14 @@ Create the devices
 Device parameters configuration
 -------------------------------
 
-X parameters are needed for a domogik device creation ...
-
+You first need to create a **Vamp** device with the following parameters:
 
 ===================== =========================== ======================================================================
 Key                   Type                        Description
 ===================== =========================== ======================================================================
-key1                  datatype                    ...
+name                  DT_String                   Technical name of the Vamp
 --------------------- --------------------------- ----------------------------------------------------------------------
-key2                  datatype                    ...
+device                DT_String			  The rs232 device where the Physical Amp are connected to (default : /dev/ttyUSB0)
 ===================== =========================== ======================================================================
 
 
