@@ -18,7 +18,7 @@ This is a no xPL plugin, sensor value are update by **0mq messages**
 This plugin allows you to use the Monoprice Amp Multizone MPR-6ZHMAUT (https://www.monoprice.com/product?p_id=10761)
 with Domogik and rs232 protocol's commands.
 
-The concept of devices **Virtual Amp (Vamp)** and **Virtual Zone (Vzone)** are used to provide a more flexible use of the **Physical Amp(s)**:
+The concept of devices **Virtual Amp (Vamp)** and **Virtual Zone (Vzone)** are used to provide a more flexible use of the **Physical Amp(s)**.
 
 A **Vamp** is the grouping of 1 to 3 Amp (if connected together with 18-pin ribbon cable) accessible 
 by the same rs232 connector. Each **Physical Amp** on the same rs232 connector is numbered from 1 to 3 and 
@@ -48,6 +48,19 @@ parameters are available (sensor/command) :
 +---------+----------------------------------+-----------------------------------------------------------------------------+
 |Mute     |Switch on/off to mute the Vzone   |* On : The Vzone is muted							   |
 |	  |				     |* Off: The Vzone is unmuted						   |
++---------+----------------------------------+-----------------------------------------------------------------------------+
+|Do Not   |Switch on/off to block the Vzone  |* On : The Vzone is blocked						   |
+|Disturb  |				     |* Off: The Vzone is free to use						   |
++---------+----------------------------------+-----------------------------------------------------------------------------+
+|Volume   |Set the volume level of the Vzone |Scale from 0 to 100% 							   |
++---------+----------------------------------+-----------------------------------------------------------------------------+
+|Treble   |Set the treble level of the Vzone |Scale from 0 to 100% 							   |
++---------+----------------------------------+-----------------------------------------------------------------------------+
+|Bass     |Set the bass level of the Vzone   |Scale from 0 to 100% 							   |
++---------+----------------------------------+-----------------------------------------------------------------------------+
+|Balance  |Set the balance level of the Vzone|Number from -10 to +10 							   |
++---------+----------------------------------+-----------------------------------------------------------------------------+
+|Channel  |Set the channel of the Vzone      |Number from 1 to 6 corresponding to the channel 1 to 6 			   |
 +---------+----------------------------------+-----------------------------------------------------------------------------+
 
 Dependencies
