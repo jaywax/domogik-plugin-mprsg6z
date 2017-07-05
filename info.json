@@ -6,7 +6,7 @@
             "description": "Mpr-Sg6z Virtual Amplifier",
             "name": "Virtual Amp",
 	    "commands": [],
-            "sensors": ["channels"],
+            "sensors": [],
             "parameters": [
                 {
 		    "default": "My Vamp",
@@ -23,6 +23,60 @@
 		    "name": "Device",
                     "xpl": false,
                     "description": "Serial bus to use to connect to the virtual Amp",
+		    "required": "yes",
+                    "type": "string"
+                },
+                {
+		    "default": "Channel1",
+                    "key": "channel1",
+		    "name": "Channel1",
+                    "xpl": false,
+                    "description": "Name of the channel 1 of the Vamp",
+		    "required": "yes",
+                    "type": "string"
+                },
+                {
+		    "default": "Channel2",
+                    "key": "channel2",
+		    "name": "Channel2",
+                    "xpl": false,
+                    "description": "Name of the channel 2 of the Vamp",
+		    "required": "yes",
+                    "type": "string"
+                },
+                {
+		    "default": "Channel3",
+                    "key": "channel3",
+		    "name": "Channel3",
+                    "xpl": false,
+                    "description": "Name of the channel 3 of the Vamp",
+		    "required": "yes",
+                    "type": "string"
+                },
+                {
+		    "default": "Channel4",
+                    "key": "channel4",
+		    "name": "Channel4",
+                    "xpl": false,
+                    "description": "Name of the channel 4 of the Vamp",
+		    "required": "yes",
+                    "type": "string"
+                },
+                {
+		    "default": "Channel5",
+                    "key": "channel5",
+		    "name": "Channel5",
+                    "xpl": false,
+                    "description": "Name of the channel 5 of the Vamp",
+		    "required": "yes",
+                    "type": "string"
+                },
+                {
+		    "default": "Channel6",
+                    "key": "channel6",
+		    "name": "Channel6",
+                    "xpl": false,
+                    "description": "Name of the channel 6 of the Vamp",
 		    "required": "yes",
                     "type": "string"
                 }
@@ -61,11 +115,11 @@
         "author": "jaywax",
         "author_email": "jaywax.2.bourbon at gmail dot com",
         "dependencies": [],
-        "description": "MPR-SG6Z (MPR-6ZHMAUT) monoprice interface",
+        "description": "MPR-SG6Z (MPR-6ZHMAUT) monoprice rs232 interface",
         "domogik_min_version": "0.5.2",
         "type": "plugin",
         "version": "0.1",
-        "tags": ["multiroom", "multizone", "sound", "music"]
+        "tags": ["multiroom", "multizone", "sound", "music", "monoprice", "mpr-6zhmaut"]
     },
     "json_version": 2,
     "commands": {
@@ -75,7 +129,7 @@
            "parameters": [
                 {
                     "key" : "status",
-                    "data_type" : "DT_Trigger",
+                    "data_type" : "DT_Bool",
                     "conversion" : ""
                 }
            ]
