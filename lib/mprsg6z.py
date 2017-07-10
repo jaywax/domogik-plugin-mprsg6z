@@ -476,7 +476,5 @@ if __name__ == "__main__":
     childs = ['11','12','13']
     bas = Mprsg6zVzone('log', 'Cuisine|Salle à manger|Salon', myamp, childs)
     print(salle_a_manger.setVzoneOneParam("PR","01"))
-    print(salle_a_manger.setVzoneOneParam("CH","02"))
-    print(salle_a_manger.setVzoneOneParam("CH","01"))
     print(salle_a_manger.setVzoneOneParam("PR","00"))
     myamp.close()
