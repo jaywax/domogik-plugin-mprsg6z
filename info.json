@@ -11,7 +11,6 @@
                 {
 		    "default": "My Vamp",
                     "key": "name",
-		    "name": "Name",
                     "xpl": false,
                     "description": "The Mprsg6z name of the device",
                     "type": "string"
@@ -19,7 +18,6 @@
                 {
 		    "default": "/dev/ttyUSB0",
                     "key": "device",
-		    "name": "Device",
                     "xpl": false,
                     "description": "Serial bus to use to connect to the virtual Amp",
                     "type": "string"
@@ -27,7 +25,6 @@
                 {
 		    "default": "Channel1",
                     "key": "channel1",
-		    "name": "Channel1",
                     "xpl": false,
                     "description": "Name of the channel 1 of the Vamp",
                     "type": "string"
@@ -35,7 +32,6 @@
                 {
 		    "default": "Channel2",
                     "key": "channel2",
-		    "name": "Channel2",
                     "xpl": false,
                     "description": "Name of the channel 2 of the Vamp",
                     "type": "string"
@@ -43,7 +39,6 @@
                 {
 		    "default": "Channel3",
                     "key": "channel3",
-		    "name": "Channel3",
                     "xpl": false,
                     "description": "Name of the channel 3 of the Vamp",
                     "type": "string"
@@ -51,7 +46,6 @@
                 {
 		    "default": "Channel4",
                     "key": "channel4",
-		    "name": "Channel4",
                     "xpl": false,
                     "description": "Name of the channel 4 of the Vamp",
                     "type": "string"
@@ -59,7 +53,6 @@
                 {
 		    "default": "Channel5",
                     "key": "channel5",
-		    "name": "Channel5",
                     "xpl": false,
                     "description": "Name of the channel 5 of the Vamp",
                     "type": "string"
@@ -67,7 +60,6 @@
                 {
 		    "default": "Channel6",
                     "key": "channel6",
-		    "name": "Channel6",
                     "xpl": false,
                     "description": "Name of the channel 6 of the Vamp",
                     "type": "string"
@@ -84,7 +76,6 @@
                 {
 		    "default": "My Vzone",
                     "key": "name",
-		    "name": "Name",
                     "xpl": false,
                     "description": "The name of a vzone",
                     "type": "string"
@@ -92,7 +83,6 @@
                 {
 		    "default": "11",
                     "key": "childs",
-		    "name": "Childs",
                     "xpl": false,
                     "description": "Childs physical zone of a vamp. Must be separated by a coma, example : 11, 12, 13",
                     "type": "string"
