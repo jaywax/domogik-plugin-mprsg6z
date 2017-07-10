@@ -90,18 +90,6 @@
             ]
         }
     },
-    "identity": {
-        "name": "mprsg6z",
-        "author": "jaywax",
-        "author_email": "jaywax.2.bourbon at gmail dot com",
-        "dependencies": [],
-        "description": "MPR-SG6Z (MPR-6ZHMAUT) monoprice rs232 interface",
-        "domogik_min_version": "0.5.2",
-        "type": "plugin",
-        "version": "0.1",
-        "tags": ["multiroom", "multizone", "sound", "music", "monoprice", "mpr-6zhmaut"]
-    },
-    "json_version": 2,
     "commands": {
         "status": {
            "name": "Send Status",
@@ -142,8 +130,8 @@
            "parameters": [
                 {
                     "key" : "volume",
-                    "data_type" : "DT_Scale",
-                    "conversion" : "from_DT_Scale_to_volume"
+                    "data_type" : "DT_Scaling",
+                    "conversion" : "from_DT_Scaling_to_volume"
                 }
            ]
         },
@@ -153,8 +141,8 @@
            "parameters": [
                 {
                     "key" : "treble",
-                    "data_type" : "DT_Scale",
-                    "conversion" : "from_DT_Scale_to_treble_bass"
+                    "data_type" : "DT_Scaling",
+                    "conversion" : "from_DT_Scaling_to_treble_bass"
                 }
            ]
         },
@@ -164,8 +152,8 @@
            "parameters": [
                 {
                     "key" : "bass",
-                    "data_type" : "DT_Scale",
-                    "conversion" : "from_DT_Scale_to_treble_bass"
+                    "data_type" : "DT_Scaling",
+                    "conversion" : "from_DT_Scaling_to_treble_bass"
                 }
            ]
         },
@@ -239,8 +227,8 @@
         },
         "volume": {
             "name": "Volume",
-            "data_type": "DT_Scale",
-            "conversion": "from_volume_to_DT_Scale",
+            "data_type": "DT_Scaling",
+            "conversion": "from_volume_to_DT_Scaling",
             "incremental": false,
             "timeout": 0,
             "history": {
@@ -253,8 +241,8 @@
         },
         "treble": {
             "name": "Treble",
-            "data_type": "DT_Scale",
-            "conversion": "from_treble_bass_to_DT_Scale",
+            "data_type": "DT_Scaling",
+            "conversion": "from_treble_bass_to_DT_Scaling",
             "incremental": false,
             "timeout": 0,
             "history": {
@@ -267,8 +255,8 @@
         },
         "bass": {
             "name": "Bass",
-            "data_type": "DT_Scale",
-            "conversion": "from_treble_bass_to_DT_Scale",
+            "data_type": "DT_Scaling",
+            "conversion": "from_treble_bass_to_DT_Scaling",
             "incremental": false,
             "timeout": 0,
             "history": {
@@ -307,5 +295,17 @@
                 "round_value": 0
             }
         }
-    }
+    },
+    "identity": {
+        "name": "mprsg6z",
+        "author": "jaywax",
+        "author_email": "jaywax.2.bourbon at gmail dot com",
+        "dependencies": [],
+        "description": "MPR-SG6Z (MPR-6ZHMAUT) monoprice rs232 interface",
+        "domogik_min_version": "0.5.2",
+        "type": "plugin",
+        "version": "0.1",
+        "tags": ["multiroom", "multizone", "sound", "music", "monoprice", "mpr-6zhmaut"]
+    },
+    "json_version": 2
 }
