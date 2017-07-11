@@ -70,8 +70,8 @@
             "id": "mprsg6z.vzone",
             "description": "Mpr-Sg6z Virtual Zone",
             "name": "Virtual Zone",
-            "commands": ["Set_Status", "Set_Mute", "Set_DoNotDisturb", "Set_Volume", "Set_Treble", "Set_Bass", "Set_Balance", "Set_Channel"],
-            "sensors": ["Get_Status", "Get_Mute", "Get_DoNotDisturb", "Get_Volume", "Get_Treble", "Get_Bass", "Get_Balance", "Get_Channel"],
+            "commands": ["Status", "Mute", "DoNotDisturb", "Volume", "Treble", "Bass", "Balance", "Channel"],
+            "sensors": ["Status", "Mute", "DoNotDisturb", "Volume", "Treble", "Bass", "Balance", "Channel"],
             "parameters": [
                 {
 		    "default": "My Vzone",
@@ -98,7 +98,7 @@
         }
     },
     "commands": {
-        "Set_Status": {
+        "Status": {
            "name": "Set Status",
            "return_confirmation": true,
            "parameters": [
@@ -109,7 +109,7 @@
                 }
            ]
         },
-        "Set_Mute": {
+        "Mute": {
            "name": "Set Mute",
            "return_confirmation": true,
            "parameters": [
@@ -120,7 +120,7 @@
                 }
            ]
         },
-        "Set_DoNotDisturb": {
+        "DoNotDisturb": {
            "name": "Set Do Not Disturb",
            "return_confirmation": true,
            "parameters": [
@@ -131,7 +131,7 @@
                 }
            ]
         },
-        "Set_Volume": {
+        "Volume": {
            "name": "Set Volume Level",
            "return_confirmation": true,
            "parameters": [
@@ -142,7 +142,7 @@
                 }
            ]
         },
-        "Set_Treble": {
+        "Treble": {
            "name": "Set Treble Level",
            "return_confirmation": true,
            "parameters": [
@@ -153,7 +153,7 @@
                 }
            ]
         },
-        "Set_Bass": {
+        "Bass": {
            "name": "Set Bass Level",
            "return_confirmation": true,
            "parameters": [
@@ -164,23 +164,27 @@
                 }
            ]
         },
-        "Set_Balance": {
+        "Balance": {
            "name": "Set Balance Level",
            "return_confirmation": true,
            "parameters": [
                 {
                     "key" : "balance",
+                    "min" : "-10",
+                    "max" : "10",
                     "data_type" : "DT_Number",
                     "conversion" : "from_DT_Number_to_balance"
                 }
            ]
         },
-        "Set_Channel": {
+        "Channel": {
            "name": "Set Channel Input",
            "return_confirmation": true,
            "parameters": [
                 {
                     "key" : "channel",
+                    "min" : "01",
+                    "max" : "06",
                     "data_type" : "DT_Number",
                     "conversion" : "from_DT_Number_to_channel"
                 }
@@ -190,7 +194,7 @@
     "xpl_commands": {},
     "xpl_stats": {},
     "sensors": {
-        "Get_Status": {
+        "Status": {
             "name": "Get Status",
             "data_type": "DT_Bool",
             "conversion": "",
@@ -204,7 +208,7 @@
                 "round_value": 0
 	    }
         },
-        "Get_Mute": {
+        "Mute": {
             "name": "Get Mute",
             "data_type": "DT_Switch",
             "conversion": "from_switch_to_DT_Switch",
@@ -218,7 +222,7 @@
                 "round_value": 0
 	    }
         },
-        "Get_DoNotDisturb": {
+        "DoNotDisturb": {
             "name": "Get Do Not Disturb",
             "data_type": "DT_Switch",
             "conversion": "from_switch_to_DT_Switch",
@@ -232,7 +236,7 @@
                 "round_value": 0
 	    }
         },
-        "Get_Volume": {
+        "Volume": {
             "name": "Get Volume",
             "data_type": "DT_Scaling",
             "conversion": "from_volume_to_DT_Scaling",
@@ -246,7 +250,7 @@
                 "round_value": 0
             }
         },
-        "Get_Treble": {
+        "Treble": {
             "name": "Get Treble",
             "data_type": "DT_Scaling",
             "conversion": "from_treble_bass_to_DT_Scaling",
@@ -260,7 +264,7 @@
                 "round_value": 0
             }
         },
-        "Get_Bass": {
+        "Bass": {
             "name": "Get Bass",
             "data_type": "DT_Scaling",
             "conversion": "from_treble_bass_to_DT_Scaling",
@@ -274,7 +278,7 @@
                 "round_value": 0
             }
         },
-        "Get_Balance": {
+        "Balance": {
             "name": "Get Balance",
             "data_type": "DT_Number",
             "conversion": "from_balance_to_DT_Number",
@@ -288,7 +292,7 @@
                 "round_value": 0
             }
         },
-        "Get_Channel": {
+        "Channel": {
             "name": "Get Channel",
             "data_type": "DT_Number",
             "conversion": "from_channel_to_DT_Number",
