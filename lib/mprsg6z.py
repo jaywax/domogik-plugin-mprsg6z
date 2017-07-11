@@ -463,18 +463,18 @@ def threadVzone():
 
 # -------------------------------------------------------------------------------------------------
 # Only for test purpose
-if __name__ == "__main__":
-    channels = {'01':'jay','02':'sof','03':'ylan','04':'leny','05':'fibre1','06':'fibre2'}
-    myamp = Mprsg6zVamp('log', '1er ampli monoprice', channels)
-    myamp.open()
-    childs = ['11']
-    cuisine = Mprsg6zVzone('log', 'Cuisine', myamp, childs)
-    childs = ['12']
-    salle_a_manger = Mprsg6zVzone('log', 'Salle à manger', myamp, childs)
-    childs = ['13']
-    salon = Mprsg6zVzone('log', 'Salon', myamp, childs)
-    childs = ['11','12','13']
-    bas = Mprsg6zVzone('log', 'Cuisine|Salle à manger|Salon', myamp, childs)
-    print(salle_a_manger.setVzoneOneParam("PR","01"))
-    print(salle_a_manger.setVzoneOneParam("PR","00"))
-    myamp.close()
+#if __name__ == "__main__":
+#    channels = {'01':'jay','02':'sof','03':'ylan','04':'leny','05':'fibre1','06':'fibre2'}
+#    myamp = Mprsg6zVamp('log', '1er ampli monoprice', channels)
+#    myamp.open()
+#    childs = ['11']
+#    cuisine = Mprsg6zVzone('log', 'Cuisine', myamp, childs)
+#    childs = ['12']
+#    salle_a_manger = Mprsg6zVzone('log', 'Salle à manger', myamp, childs)
+#    childs = ['13']
+#    salon = Mprsg6zVzone('log', 'Salon', myamp, childs)
+#    childs = ['11','12','13']
+#    bas = Mprsg6zVzone('log', 'Cuisine|Salle à manger|Salon', myamp, childs)
+#    print(salle_a_manger.setVzoneOneParam("PR","01"))
+#    print(salle_a_manger.setVzoneOneParam("PR","00"))
+#    myamp.close()

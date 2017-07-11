@@ -58,24 +58,31 @@ class Mprsg6zManager(Plugin):
 
 
         # ### get the devices list
-        # for this plugin, if no devices are created we won't be able to use devices.
         self.devices = self.get_device_list(quit_if_no_device=True)
-        self.log.info(u"==> device:   %s" % format(self.devices))
+        #self.log.info(u"==> device:   %s" % format(self.devices))
+
+        # for this plugin, we have to found the mprsg6z.vamp devices first
+	self.liste_vamp = (a_device for a_device in self.devices if a_device["device_type_id"] == "mprsg6z.vamp")
+	for a_vamp in self.liste_vamp:
+	    device_name = a_vamp["name"]
+            device_id = a_vamp["id"]
+            device_type = a_vamp["device_type_id"]
+	    device_device = self.get_parameter(a_vamp, "device")
+ 	    device_channels = {'01': self.get_parameter(a_vamp, "channel1"), '02': self.get_parameter(a_vamp, "channel2"), '03': self.get_parameter(a_vamp, "channel3"), '04': self.get_parameter(a_vamp, "channel4"),
+	    '05': self.get_parameter(a_vamp, "channel5"), '06': self.get_parameter(a_vamp, "channel6")}
+            # ### Open a vamp device
+            try:
+                self.mprsg6zvamp = Mprsg6zVamp(self.log, device_name, device_channels, device_device)
+            except Mprsg6zException as e:
+                self.log.error(e.value)
+                print(e.value)
+                self.force_leave()
+                return
 
         # get the sensors id per device :
-        self.sensors = self.get_sensors(self.devices)
-        self.log.info(u"==> sensors:   %s" % format(self.sensors))        # ==> sensors:   {'device id': 'sensor name': 'sensor id'}
+        #self.sensors = self.get_sensors(self.devices)
+        #self.log.info(u"==> sensors:   %s" % format(self.sensors))        # ==> sensors:   {'device id': 'sensor name': 'sensor id'}
         # Affiche: INFO ==> sensors:   {4: {u'1-wire temperature': 36}, 5: {u'1-wire counter diff': 38, u'1-wire counter': 37}}
-
-
-        # ### Open one wire network
-        try:
-            self.onewire = OneWireNetwork(self.log, onewire_device, onewire_cache)
-        except OneWireException as e:
-            self.log.error(e.value)
-            print(e.value)
-            self.force_leave()
-            return
 
 
         # ### For each device

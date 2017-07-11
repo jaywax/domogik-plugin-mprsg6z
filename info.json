@@ -9,13 +9,6 @@
             "sensors": [],
             "parameters": [
                 {
-		    "default": "Amp1",
-                    "key": "name",
-                    "xpl": false,
-                    "description": "The Mprsg6z name of the device",
-                    "type": "string"
-                },
-                {
 		    "default": "/dev/ttyUSB0",
                     "key": "device",
                     "xpl": false,
@@ -74,13 +67,6 @@
             "sensors": ["Status", "Mute", "DoNotDisturb", "Volume", "Treble", "Bass", "Balance", "Channel"],
             "parameters": [
                 {
-		    "default": "My Vzone",
-                    "key": "name",
-                    "xpl": false,
-                    "description": "The name of a vzone",
-                    "type": "string"
-                },
-                {
 		    "default": "11",
                     "key": "childs",
                     "xpl": false,
@@ -88,7 +74,7 @@
                     "type": "string"
                 },
 		{
-		    "default": "Amp1",
+		    "default": "mprsg6z.vamp",
 		    "key": "vamp_name",
                     "xpl": false,
                     "description": "Name of the mprsg6z.vamp device to connect to",
@@ -170,10 +156,8 @@
            "parameters": [
                 {
                     "key" : "balance",
-                    "min" : "-10",
-                    "max" : "10",
-                    "data_type" : "DT_Number",
-                    "conversion" : "from_DT_Number_to_balance"
+                    "data_type" : "DT_Scaling",
+                    "conversion" : "from_DT_Scaling_to_balance"
                 }
            ]
         },
@@ -183,8 +167,6 @@
            "parameters": [
                 {
                     "key" : "channel",
-                    "min" : "01",
-                    "max" : "06",
                     "data_type" : "DT_Number",
                     "conversion" : "from_DT_Number_to_channel"
                 }
@@ -281,7 +263,7 @@
         "Balance": {
             "name": "Get Balance",
             "data_type": "DT_Number",
-            "conversion": "from_balance_to_DT_Number",
+            "conversion": "from_balance_to_DT_Scaling",
             "incremental": false,
             "timeout": 0,
             "history": {
