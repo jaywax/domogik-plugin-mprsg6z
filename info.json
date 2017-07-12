@@ -75,7 +75,7 @@
                 },
 		{
 		    "default": "mprsg6z.vamp",
-		    "key": "vamp_name",
+		    "key": "mprsg6zvamp",
                     "xpl": false,
                     "description": "Name of the mprsg6z.vamp device to connect to",
                     "type": "string"
@@ -85,7 +85,7 @@
     },
     "commands": {
         "Status": {
-           "name": "Set Status",
+           "name": "Status",
            "return_confirmation": true,
            "parameters": [
                 {
@@ -96,7 +96,7 @@
            ]
         },
         "Mute": {
-           "name": "Set Mute",
+           "name": "Mute",
            "return_confirmation": true,
            "parameters": [
                 {
@@ -107,7 +107,7 @@
            ]
         },
         "DoNotDisturb": {
-           "name": "Set Do Not Disturb",
+           "name": "Do not disturb",
            "return_confirmation": true,
            "parameters": [
                 {
@@ -118,7 +118,7 @@
            ]
         },
         "Volume": {
-           "name": "Set Volume Level",
+           "name": "Volume",
            "return_confirmation": true,
            "parameters": [
                 {
@@ -129,7 +129,7 @@
            ]
         },
         "Treble": {
-           "name": "Set Treble Level",
+           "name": "Treble",
            "return_confirmation": true,
            "parameters": [
                 {
@@ -140,7 +140,7 @@
            ]
         },
         "Bass": {
-           "name": "Set Bass Level",
+           "name": "Bass",
            "return_confirmation": true,
            "parameters": [
                 {
@@ -151,7 +151,7 @@
            ]
         },
         "Balance": {
-           "name": "Set Balance Level",
+           "name": "Balance",
            "return_confirmation": true,
            "parameters": [
                 {
@@ -162,7 +162,7 @@
            ]
         },
         "Channel": {
-           "name": "Set Channel Input",
+           "name": "Channel",
            "return_confirmation": true,
            "parameters": [
                 {
@@ -177,7 +177,7 @@
     "xpl_stats": {},
     "sensors": {
         "Status": {
-            "name": "Get Status",
+            "name": "Status",
             "data_type": "DT_Bool",
             "conversion": "",
             "incremental": false,
@@ -191,7 +191,7 @@
 	    }
         },
         "Mute": {
-            "name": "Get Mute",
+            "name": "Mute",
             "data_type": "DT_Switch",
             "conversion": "from_switch_to_DT_Switch",
             "incremental": false,
@@ -205,7 +205,7 @@
 	    }
         },
         "DoNotDisturb": {
-            "name": "Get Do Not Disturb",
+            "name": "Do not disturb",
             "data_type": "DT_Switch",
             "conversion": "from_switch_to_DT_Switch",
             "incremental": false,
@@ -219,7 +219,7 @@
 	    }
         },
         "Volume": {
-            "name": "Get Volume",
+            "name": "Volume",
             "data_type": "DT_Scaling",
             "conversion": "from_volume_to_DT_Scaling",
             "incremental": false,
@@ -233,7 +233,7 @@
             }
         },
         "Treble": {
-            "name": "Get Treble",
+            "name": "Treble",
             "data_type": "DT_Scaling",
             "conversion": "from_treble_bass_to_DT_Scaling",
             "incremental": false,
@@ -247,7 +247,7 @@
             }
         },
         "Bass": {
-            "name": "Get Bass",
+            "name": "Bass",
             "data_type": "DT_Scaling",
             "conversion": "from_treble_bass_to_DT_Scaling",
             "incremental": false,
@@ -261,8 +261,8 @@
             }
         },
         "Balance": {
-            "name": "Get Balance",
-            "data_type": "DT_Number",
+            "name": "Balance",
+            "data_type": "DT_Scaling",
             "conversion": "from_balance_to_DT_Scaling",
             "incremental": false,
             "timeout": 0,
@@ -275,7 +275,7 @@
             }
         },
         "Channel": {
-            "name": "Get Channel",
+            "name": "Channel",
             "data_type": "DT_Number",
             "conversion": "from_channel_to_DT_Number",
             "incremental": false,

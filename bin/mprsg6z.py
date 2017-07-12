@@ -57,77 +57,50 @@ class Mprsg6zManager(Plugin):
             return
 
 
-        # ### get the devices list
+        # get the devices list
         self.devices = self.get_device_list(quit_if_no_device=True)
-        #self.log.info(u"==> device:   %s" % format(self.devices))
+        self.log.info(u"==> device:   %s" % format(self.devices))
 
-        # for this plugin, we have to found the mprsg6z.vamp devices first
+        # for this plugin, we have to find the mprsg6z.vamp devices first and loop on it
 	self.liste_vamp = (a_device for a_device in self.devices if a_device["device_type_id"] == "mprsg6z.vamp")
 	for a_vamp in self.liste_vamp:
-	    device_name = a_vamp["name"]
-            device_id = a_vamp["id"]
-            device_type = a_vamp["device_type_id"]
-	    device_device = self.get_parameter(a_vamp, "device")
- 	    device_channels = {'01': self.get_parameter(a_vamp, "channel1"), '02': self.get_parameter(a_vamp, "channel2"), '03': self.get_parameter(a_vamp, "channel3"), '04': self.get_parameter(a_vamp, "channel4"),
+	    vamp_name = a_vamp["name"]
+            vamp_id = a_vamp["id"]
+            vamp_type = a_vamp["device_type_id"]
+	    vamp_device = self.get_parameter(a_vamp, "device")
+ 	    vamp_channels = {'01': self.get_parameter(a_vamp, "channel1"), '02': self.get_parameter(a_vamp, "channel2"), '03': self.get_parameter(a_vamp, "channel3"), '04': self.get_parameter(a_vamp, "channel4"),
 	    '05': self.get_parameter(a_vamp, "channel5"), '06': self.get_parameter(a_vamp, "channel6")}
-            # ### Open a vamp device
+
+            # create vamp device and open it
             try:
-                self.mprsg6zvamp = Mprsg6zVamp(self.log, device_name, device_channels, device_device)
+                mprsg6zvamp = Mprsg6zVamp(self.log, vamp_name, vamp_channels, vamp_device)
+		mprsg6zvamp.open()
             except Mprsg6zException as e:
                 self.log.error(e.value)
                 print(e.value)
                 self.force_leave()
                 return
-
-        # get the sensors id per device :
-        #self.sensors = self.get_sensors(self.devices)
-        #self.log.info(u"==> sensors:   %s" % format(self.sensors))        # ==> sensors:   {'device id': 'sensor name': 'sensor id'}
-        # Affiche: INFO ==> sensors:   {4: {u'1-wire temperature': 36}, 5: {u'1-wire counter diff': 38, u'1-wire counter': 37}}
-
-
-        # ### For each device
-        self.device_list = {}
-        thread_sensors = None
-        for a_device in self.devices:
-            # self.log.info(u"a_device:   %s" % format(a_device))
-
-            device_name = a_device["name"]                                      # Ex.: "Temp vesta"
-            device_id = a_device["id"]                                          # Ex.: "73"
-            device_type = a_device["device_type_id"]                            # Ex.: "onewire.thermometer_temp | onewire.batterymonitor_voltage"
-            sensor_properties = self.get_parameter(a_device, "properties")
-            sensor_address = self.get_parameter(a_device, "device")
-            self.device_list.update({device_id : {'name': device_name, 'address': sensor_address, 'properties': sensor_properties}})
-
-            if device_type != "onewire.pio_output_switch":
-                sensor_interval = self.get_parameter(a_device, "interval")
-                self.log.info(u"==> Device '{0}' (id:{1}/{2}), sensor = {3}/{4}".format(device_name, device_id, device_type, sensor_address, sensor_properties))
-                # Affiche: INFO ==> Device 'TempExt' (id:4/onewire.thermometer_temp), sensor = 28.7079D0040000/temperature
-                # self.log.debug(u"==> Sensor list of device '{0}': '{1}'".format(device_id, self.sensors[device_id]))
-                # Affiche: INFO ==> Sensor list of device id:5: '{u'onewire counter diff': 38, u'onewire counter': 37}'
-
-                if sensor_interval > 0:
-                    self.log.debug(u"==> Add '%s' device in reading thread" % device_name)
-                    self.onewire.add_sensor(device_id,
-                                                    device_name,
-                                                    sensor_address,
-                                                    sensor_properties,
-                                                    sensor_interval)
-                else:
-                    self.log.debug(u"==> Reading thread for '%s' device is DISABLED (interval < 0) !" % device_name)
-
-            else:
-                self.log.info(u"==> Device '{0}' (id:{1}/{2}), command = {3}/{4}".format(device_name, device_id, device_type, sensor_address, sensor_properties))
-
-        thread_sensors = threading.Thread(None,
-                                          self.onewire.loop_read_sensor,
-                                          'Main_reading_sensors',
-                                          (self.send_pub_data, self.get_stop()),
-                                          {})
-        thread_sensors.start()
-        self.register_thread(thread_sensors)
-        self.ready()
-
-
+	    
+	    # we have to find the mprsg6z.vzone devices used by this mprsg6zvamp instance
+	    self.liste_vzone = (b_device for b_device in self.devices if b_device["device_type_id"] == "mprsg6z.vzone")
+	    liste_goodvzone = (c_device for c_device in self.liste_vzone if self.get_parameter(c_device, "mprsg6zvamp") == vamp_name)
+	    # for each good vzone found :
+	    for a_vzone in liste_goodvzone:
+	        vzone_name = a_vzone["name"]
+		vzone_id = a_vzone["id"]
+		vzone_type = a_vzone["device_type_id"]
+		vzone_childs = self.get_parameter(a_vzone, "childs")
+		the_childs = vzone_childs.split(",") 
+		# create vzone device
+		try:
+		    mprsg6zvzone = Mprsg6zVzone(self.log, vzone_name, mprsg6zvamp, the_childs)
+		    mprsg6zvzone.threadVzone()
+                except Mprsg6zException as e:
+                    self.log.error(e.value)
+                    print(e.value)
+                    self.force_leave()
+                    return
+                
     # -------------------------------------------------------------------------------------------------
     def send_pub_data(self, device_id, value):
         """ Send the sensors values over MQ
