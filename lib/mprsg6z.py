@@ -313,11 +313,7 @@ class Mprsg6zVzone():
     """
     Create python object and methods to interact with virtual zones
 
-    instances -- Variable of class to store created instances of virtual zones
     """
-
-    instances = []
-
     def __init__(self, log, zname, v_amp_obj, childs):
         """
         Create an instance of v_zone
@@ -333,7 +329,6 @@ class Mprsg6zVzone():
         self.zname = zname
         self.v_amp_obj = v_amp_obj
         self.childs = childs
-	Mprsg6zVzone.instances.append(self)
         # initialize the dict to store running v_params
         self.v_params = {}
         self.v_params['childs'] = childs
@@ -427,7 +422,7 @@ class Mprsg6zVzone():
 	return(self.zname, param, value)
 
 # -------------------------------------------------------------------------------------------------
-    def threadVzone():
+    def threadVzone(self):
         """
         Thread function to update sensors of v_zone
 
@@ -435,33 +430,31 @@ class Mprsg6zVzone():
         var -- Dict with differences of all instances of v_zone
         """
 
-        # dict created to send to MQ
-        var = {}
-        for instance in Mprsg6zVzone.instances:
-	    # check if one of a p_zone child is lockedby 
-	    childs_lockedby = []
-	    for child in instance.v_params['childs']:
-	        childs_lockedby.append(instance.v_amp_obj.p_params[child]['lockedby'])   
-	    # if more than 1 unique lockedby is reported, the whole v_zone must be locked
-	    if len(set(childs_lockedby)) > 1:
-	        instance.v_params['status'] = "locked"
+        # check if one of a p_zone child is lockedby 
+	var={}
+	childs_lockedby = []
+	for child in self.v_params['childs']:
+	    childs_lockedby.append(self.v_amp_obj.p_params[child]['lockedby'])   
+	# if more than 1 unique lockedby is reported, the whole v_zone must be locked
+	if len(set(childs_lockedby)) > 1:
+	    self.v_params['status'] = "locked"
+	else:
+	# if not, we use the first_pzone as model
+            first_pzone = self.v_params['childs'][0]
+            if self.v_amp_obj.p_params[first_pzone]['lockedby'] == self.zname:
+	        self.v_params['status'] = "on"
+            elif self.v_amp_obj.p_params[first_pzone]['lockedby'] == '':
+	        self.v_params['status'] = "available"
+	    # else, the v_zone should be locked
 	    else:
-	    # if not, we use the first_pzone as model
-                first_pzone = instance.v_params['childs'][0]
-                if instance.v_amp_obj.p_params[first_pzone]['lockedby'] == instance.zname:
-	            instance.v_params['status'] = "on"
-                elif instance.v_amp_obj.p_params[first_pzone]['lockedby'] == '':
-	            instance.v_params['status'] = "available"
-	        # else, the v_zone should be locked
-	        else:
-	            instance.v_params['status'] = "locked"
-	    # then we update the others params of the vzone (copy the sensors of the first p_zone)
-	    for cle, valeur in PARAM_DEFAULT.items():
-                instance.v_params[cle] = instance.v_amp_obj.p_params[instance.v_params["childs"][0]][cle]
-	    diffparams = [(param+':'+instance.v_params[param]) for param in instance.v_params if instance.v_params[param] != instance.v_params_old[param]]
-	    instance.v_params_old = instance.v_params.copy()
-	    if diffparams:
-	        var[instance.zname] = diffparams
+	        self.v_params['status'] = "locked"
+	# then we update the others params of the vzone (copy the sensors of the first p_zone)
+	for cle, valeur in PARAM_DEFAULT.items():
+            self.v_params[cle] = self.v_amp_obj.p_params[self.v_params["childs"][0]][cle]
+	diffparams = [(param+':'+self.v_params[param]) for param in self.v_params if self.v_params[param] != self.v_params_old[param]]
+	self.v_params_old = self.v_params.copy()
+	if diffparams:
+	    var[self.zname] = diffparams
         return(var)
 
 # -------------------------------------------------------------------------------------------------

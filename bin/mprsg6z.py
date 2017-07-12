@@ -100,7 +100,7 @@ class Mprsg6zManager(Plugin):
                     print(e.value)
                     self.force_leave()
                     return
-                
+	       
     # -------------------------------------------------------------------------------------------------
     def send_pub_data(self, device_id, value):
         """ Send the sensors values over MQ
