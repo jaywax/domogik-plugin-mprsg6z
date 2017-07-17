@@ -1,70 +1,69 @@
 {
-    "configuration": [],
-    "device_types": {
-        "mprsg6z.vamp": {
-            "id": "mprsg6z.vamp",
-            "description": "Mpr-Sg6z Virtual Amplifier",
-            "name": "Virtual Amp",
-	    "commands": [],
-            "sensors": [],
-            "parameters": [
-                {
-		    "default": "/dev/ttyUSB0",
-                    "key": "device",
-                    "xpl": false,
-                    "description": "Serial bus to use to connect to the virtual Amp",
-                    "type": "string"
-                },
-                {
-		    "default": "Channel1",
-                    "key": "channel1",
-                    "xpl": false,
-                    "description": "Name of the channel 1 of the Vamp",
-                    "type": "string"
-                },
-                {
-		    "default": "Channel2",
-                    "key": "channel2",
-                    "xpl": false,
-                    "description": "Name of the channel 2 of the Vamp",
-                    "type": "string"
-                },
-                {
-		    "default": "Channel3",
-                    "key": "channel3",
-                    "xpl": false,
-                    "description": "Name of the channel 3 of the Vamp",
-                    "type": "string"
-                },
-                {
-		    "default": "Channel4",
-                    "key": "channel4",
-                    "xpl": false,
-                    "description": "Name of the channel 4 of the Vamp",
-                    "type": "string"
-                },
-                {
-		    "default": "Channel5",
-                    "key": "channel5",
-                    "xpl": false,
-                    "description": "Name of the channel 5 of the Vamp",
-                    "type": "string"
-                },
-                {
-		    "default": "Channel6",
-                    "key": "channel6",
-                    "xpl": false,
-                    "description": "Name of the channel 6 of the Vamp",
-                    "type": "string"
-                }
-            ]
+    "configuration": [
+        {
+            "default": "/dev/ttyUSB0",
+            "description": "Serial bus to use to connect to the virtual Amp",
+            "key": "device",
+            "name": "device",
+            "required": "yes",
+            "type": "string"
         },
+        {
+            "default": "Channel1",
+            "description": "Name of the channel 1 of virtual Amp",
+            "key": "channel1",
+            "name": "channel1",
+            "required": "yes",
+            "type": "string"
+        },
+        {
+            "default": "Channel2",
+            "description": "Name of the channel 2 of virtual Amp",
+            "key": "channel2",
+            "name": "channel2",
+            "required": "yes",
+            "type": "string"
+        },
+        {
+            "default": "Channel3",
+            "description": "Name of the channel 3 of virtual Amp",
+            "key": "channel3",
+            "name": "channel3",
+            "required": "yes",
+            "type": "string"
+        },
+        {
+            "default": "Channel4",
+            "description": "Name of the channel 4 of virtual Amp",
+            "key": "channel4",
+            "name": "channel4",
+            "required": "yes",
+            "type": "string"
+        },
+        {
+            "default": "Channel5",
+            "description": "Name of the channel 5 of virtual Amp",
+            "key": "channel5",
+            "name": "channel5",
+            "required": "yes",
+            "type": "string"
+        },
+        {
+            "default": "Channel6",
+            "description": "Name of the channel 6 of virtual Amp",
+            "key": "channel6",
+            "name": "channel6",
+            "required": "yes",
+            "type": "string"
+        }
+    ],
+    "device_types": {
         "mprsg6z.vzone": {
             "id": "mprsg6z.vzone",
             "description": "Mpr-Sg6z Virtual Zone",
             "name": "Virtual Zone",
-            "commands": ["Status", "Mute", "DoNotDisturb", "Volume", "Treble", "Bass", "Balance", "Channel"],
-            "sensors": ["Status", "Mute", "DoNotDisturb", "Volume", "Treble", "Bass", "Balance", "Channel"],
+            "commands": ["STATUS", "MU", "DT", "VO", "TR", "BS", "BL", "CH"],
+            "sensors": ["STATUS", "MU", "DT", "VO", "TR", "BS", "BL", "CH"],
             "parameters": [
                 {
 		    "default": "11",
@@ -72,101 +71,94 @@
                     "xpl": false,
                     "description": "Childs physical zone of a vamp. Must be separated by a coma, example : 11, 12, 13",
                     "type": "string"
-                },
-		{
-		    "default": "mprsg6z.vamp",
-		    "key": "mprsg6zvamp",
-                    "xpl": false,
-                    "description": "Name of the mprsg6z.vamp device to connect to",
-                    "type": "string"
                 }
             ]
         }
     },
     "commands": {
-        "Status": {
-           "name": "Status",
+        "STATUS": {
+           "name": "STATUS",
            "return_confirmation": true,
            "parameters": [
                 {
-                    "key" : "status",
+                    "key" : "STATUS",
                     "data_type" : "DT_Bool",
-                    "conversion" : ""
+                    "conversion" : "from_DT_Switch_to_switch"
                 }
            ]
         },
-        "Mute": {
+        "MU": {
            "name": "Mute",
            "return_confirmation": true,
            "parameters": [
                 {
-                    "key" : "switch",
+                    "key" : "MU",
                     "data_type" : "DT_Switch",
                     "conversion" : "from_DT_Switch_to_switch"
                 }
            ]
         },
-        "DoNotDisturb": {
+        "DT": {
            "name": "Do not disturb",
            "return_confirmation": true,
            "parameters": [
                 {
-                    "key" : "switch",
+                    "key" : "DT",
                     "data_type" : "DT_Switch",
                     "conversion" : "from_DT_Switch_to_switch"
                 }
            ]
         },
-        "Volume": {
+        "VO": {
            "name": "Volume",
            "return_confirmation": true,
            "parameters": [
                 {
-                    "key" : "volume",
+                    "key" : "VO",
                     "data_type" : "DT_Scaling",
                     "conversion" : "from_DT_Scaling_to_volume"
                 }
            ]
         },
-        "Treble": {
+        "TR": {
            "name": "Treble",
            "return_confirmation": true,
            "parameters": [
                 {
-                    "key" : "treble",
+                    "key" : "TR",
                     "data_type" : "DT_Scaling",
                     "conversion" : "from_DT_Scaling_to_treble_bass"
                 }
            ]
         },
-        "Bass": {
+        "BS": {
            "name": "Bass",
            "return_confirmation": true,
            "parameters": [
                 {
-                    "key" : "bass",
+                    "key" : "BS",
                     "data_type" : "DT_Scaling",
                     "conversion" : "from_DT_Scaling_to_treble_bass"
                 }
            ]
         },
-        "Balance": {
+        "BL": {
            "name": "Balance",
            "return_confirmation": true,
            "parameters": [
                 {
-                    "key" : "balance",
+                    "key" : "BL",
                     "data_type" : "DT_Scaling",
                     "conversion" : "from_DT_Scaling_to_balance"
                 }
            ]
         },
-        "Channel": {
+        "CH": {
            "name": "Channel",
            "return_confirmation": true,
            "parameters": [
                 {
-                    "key" : "channel",
+                    "key" : "CH",
                     "data_type" : "DT_Number",
                     "conversion" : "from_DT_Number_to_channel"
                 }
@@ -176,10 +168,10 @@
     "xpl_commands": {},
     "xpl_stats": {},
     "sensors": {
-        "Status": {
-            "name": "Status",
+        "STATUS": {
+            "name": "STATUS",
             "data_type": "DT_Bool",
-            "conversion": "",
+            "conversion": "from_switch_to_DT_Switch",
             "incremental": false,
             "timeout": 0,
             "history": {
@@ -190,7 +182,7 @@
                 "round_value": 0
 	    }
         },
-        "Mute": {
+        "MU": {
             "name": "Mute",
             "data_type": "DT_Switch",
             "conversion": "from_switch_to_DT_Switch",
@@ -204,7 +196,7 @@
                 "round_value": 0
 	    }
         },
-        "DoNotDisturb": {
+        "DT": {
             "name": "Do not disturb",
             "data_type": "DT_Switch",
             "conversion": "from_switch_to_DT_Switch",
@@ -218,7 +210,7 @@
                 "round_value": 0
 	    }
         },
-        "Volume": {
+        "VO": {
             "name": "Volume",
             "data_type": "DT_Scaling",
             "conversion": "from_volume_to_DT_Scaling",
@@ -232,7 +224,7 @@
                 "round_value": 0
             }
         },
-        "Treble": {
+        "TR": {
             "name": "Treble",
             "data_type": "DT_Scaling",
             "conversion": "from_treble_bass_to_DT_Scaling",
@@ -246,7 +238,7 @@
                 "round_value": 0
             }
         },
-        "Bass": {
+        "BS": {
             "name": "Bass",
             "data_type": "DT_Scaling",
             "conversion": "from_treble_bass_to_DT_Scaling",
@@ -260,7 +252,7 @@
                 "round_value": 0
             }
         },
-        "Balance": {
+        "BL": {
             "name": "Balance",
             "data_type": "DT_Scaling",
             "conversion": "from_balance_to_DT_Scaling",
@@ -274,7 +266,7 @@
                 "round_value": 0
             }
         },
-        "Channel": {
+        "CH": {
             "name": "Channel",
             "data_type": "DT_Number",
             "conversion": "from_channel_to_DT_Number",

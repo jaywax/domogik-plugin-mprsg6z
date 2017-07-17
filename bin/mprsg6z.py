@@ -37,7 +37,6 @@ from domogik.common.plugin import Plugin
 from domogikmq.message import MQMessage
 
 from domogik_packages.plugin_mprsg6z.lib.mprsg6z import Mprsg6zVamp
-from domogik_packages.plugin_mprsg6z.lib.mprsg6z import Mprsg6zVzone
 from domogik_packages.plugin_mprsg6z.lib.mprsg6z import Mprsg6zException
 
 import threading
@@ -59,56 +58,64 @@ class Mprsg6zManager(Plugin):
 
         # get the devices list
         self.devices = self.get_device_list(quit_if_no_device=True)
+	self.sensors = self.get_sensors(self.devices)
+	self.commands = self.get_commands(self.devices)
         self.log.info(u"==> device:   %s" % format(self.devices))
+        self.log.info(u"==> sensors:   %s" % format(self.sensors))
+        self.log.info(u"==> commands:   %s" % format(self.commands))
 
-        # for this plugin, we have to find the mprsg6z.vamp devices first and loop on it
-	self.liste_vamp = (a_device for a_device in self.devices if a_device["device_type_id"] == "mprsg6z.vamp")
-	for a_vamp in self.liste_vamp:
-	    vamp_name = a_vamp["name"]
-            vamp_id = a_vamp["id"]
-            vamp_type = a_vamp["device_type_id"]
-	    vamp_device = self.get_parameter(a_vamp, "device")
- 	    vamp_channels = {'01': self.get_parameter(a_vamp, "channel1"), '02': self.get_parameter(a_vamp, "channel2"), '03': self.get_parameter(a_vamp, "channel3"), '04': self.get_parameter(a_vamp, "channel4"),
-	    '05': self.get_parameter(a_vamp, "channel5"), '06': self.get_parameter(a_vamp, "channel6")}
+	# ### get all config keys
+        mprsg6z_device = str(self.get_config('device'))
+        mprsg6z_channel1 = self.get_config('channel1')
+        mprsg6z_channel2 = self.get_config('channel2')
+        mprsg6z_channel3 = self.get_config('channel3')
+        mprsg6z_channel4 = self.get_config('channel4')
+        mprsg6z_channel5 = self.get_config('channel5')
+        mprsg6z_channel6 = self.get_config('channel6')
+	mprsg6z_channels = {'01' : mprsg6z_channel1, '02' : mprsg6z_channel2, '03' : mprsg6z_channel3, '04' : mprsg6z_channel4, 
+	'05' : mprsg6z_channel5, '06' : mprsg6z_channel6}
 
-            # create vamp device and open it
-            try:
-                mprsg6zvamp = Mprsg6zVamp(self.log, vamp_name, vamp_channels, vamp_device)
-		mprsg6zvamp.open()
-            except Mprsg6zException as e:
-                self.log.error(e.value)
-                print(e.value)
-                self.force_leave()
-                return
-	    
-	    # we have to find the mprsg6z.vzone devices used by this mprsg6zvamp instance
-	    self.liste_vzone = (b_device for b_device in self.devices if b_device["device_type_id"] == "mprsg6z.vzone")
-	    liste_goodvzone = (c_device for c_device in self.liste_vzone if self.get_parameter(c_device, "mprsg6zvamp") == vamp_name)
-	    # for each good vzone found :
-	    for a_vzone in liste_goodvzone:
-	        vzone_name = a_vzone["name"]
-		vzone_id = a_vzone["id"]
-		vzone_type = a_vzone["device_type_id"]
-		vzone_childs = self.get_parameter(a_vzone, "childs")
-		the_childs = vzone_childs.split(",") 
-		# create vzone device
-		try:
-		    mprsg6zvzone = Mprsg6zVzone(self.log, vzone_name, mprsg6zvamp, the_childs)
-		    mprsg6zvzone.threadVzone()
-                except Mprsg6zException as e:
-                    self.log.error(e.value)
-                    print(e.value)
-                    self.force_leave()
-                    return
-	       
+        # create vamp device and open it
+        try:
+            self.mprsg6zvamp = Mprsg6zVamp(self.log, mprsg6z_channels, mprsg6z_device)
+	    self.mprsg6zvamp.open()
+        except Mprsg6zException as e:
+            self.log.error(e.value)
+            print(e.value)
+            self.force_leave()
+            return
+
+	# for each vzone
+        self.device_list = {}
+        thread_sensors = None
+        for a_device in self.devices:
+            device_name = a_device["name"]
+            device_id = a_device["id"]
+            device_type = a_device["device_type_id"]
+            device_childs = self.get_parameter(a_device, "childs")
+            self.device_list.update({device_id : {'name': device_name, 'childs': device_childs}})
+	    self.mprsg6zvamp.add_vzone(device_id,device_name,device_childs)
+	thread_sensors = threading.Thread(None,
+        				self.mprsg6zvamp.loop_read_vzones,
+        				'Main_reading_vzones',
+        				(self.send_pub_data, self.get_stop()),
+        				{})
+        thread_sensors.start()
+        self.register_thread(thread_sensors)
+        self.ready()
+
     # -------------------------------------------------------------------------------------------------
+
     def send_pub_data(self, device_id, value):
         """ Send the sensors values over MQ
         """
         data = {}
-        for sensor in self.sensors[device_id]:                  # "for" nécessaire pour les 2 sensors counter : '1-wire counter diff' et '1-wire counter'
-            data[self.sensors[device_id][sensor]] = value       # sensor = sensor name in info.json file
-        self.log.debug(u"==> Update Sensor '%s' for device id %s (%s)" % (format(data), device_id, self.device_list[device_id]["name"]))    # {u'id': u'value'}
+	sensor = value[0]
+	valeur = value[1]
+	if sensor == 'PR':
+	    sensor = 'STATUS'
+        data[self.sensors[device_id][sensor]] = valeur       # sensor = sensor name in info.json file
+        self.log.debug(u"==> Update Sensor {0}:{1} for device id {2} ({3})".format(sensor,valeur,device_id,self.device_list[device_id]["name"]))    # {u'id': u'value'}
 
         try:
             self._pub.send_event('client.sensor', data)
@@ -117,8 +124,8 @@ class Mprsg6zManager(Plugin):
             self.log.debug(u"Bad MQ message to send. This may happen due to some invalid rainhour data. MQ data is : {0}".format(data))
             pass
 
-
     # -------------------------------------------------------------------------------------------------
+
     def on_mdp_request(self, msg):
         """ Called when a MQ req/rep message is received
         """
@@ -128,9 +135,11 @@ class Mprsg6zManager(Plugin):
             reason = None
             status = True
             data = msg.get_data()
-            
+
             device_id = data["device_id"]
             command_id = data["command_id"]
+	    z = ["device_id","command_id"]
+	    param = list(set(data)-set(z))[0]
             if device_id not in self.device_list:
                 self.log.error(u"### MQ REQ command, Device ID '%s' unknown, Have you restarted the plugin after device creation ?" % device_id)
                 status = False
@@ -141,12 +150,13 @@ class Mprsg6zManager(Plugin):
             device_name = self.device_list[device_id]["name"]
             self.log.info(u"==> Received for device '%s' MQ REQ command message: %s" % (device_name, format(data)))         # {u'command_id': 70, u'value': u'1', u'device_id': 169}
 
-            status, reason = self.onewire.writeSensor(self.device_list[device_id]["address"], self.device_list[device_id]["properties"], data["value"])
+            status, reason = self.mprsg6zvamp.setVzoneOneParam(device_id, param, data[param])
             if status:
-                self.send_pub_data(device_id, data["value"])    # Update sensor command.
-            
+                self.send_pub_data(device_id, (param,data[param]))    # Update sensor command.
+
             # Reply MQ REP (acq) to REQ command
             self.send_rep_ack(status, reason, command_id, device_name) ;
+
 
     # -------------------------------------------------------------------------------------------------
     def send_rep_ack(self, status, reason, cmd_id, dev_name):
