@@ -82,8 +82,8 @@
            "parameters": [
                 {
                     "key" : "PO",
-                    "data_type" : "DT_Switch",
-                    "conversion" : "from_DT_Switch_to_switch"
+                    "data_type" : "DT_Trigger",
+                    "conversion" : ""
                 }
            ]
         },
@@ -180,23 +180,10 @@
                 "max": 0,
                 "expire": 0,
                 "round_value": 0
-	    },
-        "PO": {
-            "name": "Power",
-            "data_type": "DT_Switch",
-            "conversion": "from_switch_to_DT_Switch",
-            "incremental": false,
-            "timeout": 0,
-            "history": {
-                "store": true,
-                "duplicate": false,
-                "max": 0,
-                "expire": 0,
-                "round_value": 0
 	    }
-        },
+	},
         "MU": {
-            "name": "Mute",
+            "name": "MU",
             "data_type": "DT_Switch",
             "conversion": "from_switch_to_DT_Switch",
             "incremental": false,
@@ -210,7 +197,7 @@
 	    }
         },
         "DT": {
-            "name": "Do not disturb",
+            "name": "DT",
             "data_type": "DT_Switch",
             "conversion": "from_switch_to_DT_Switch",
             "incremental": false,
@@ -224,7 +211,7 @@
 	    }
         },
         "VO": {
-            "name": "Volume",
+            "name": "VO",
             "data_type": "DT_Scaling",
             "conversion": "from_volume_to_DT_Scaling",
             "incremental": false,
@@ -238,7 +225,7 @@
             }
         },
         "TR": {
-            "name": "Treble",
+            "name": "TR",
             "data_type": "DT_Scaling",
             "conversion": "from_treble_bass_to_DT_Scaling",
             "incremental": false,
@@ -252,7 +239,7 @@
             }
         },
         "BS": {
-            "name": "Bass",
+            "name": "BS",
             "data_type": "DT_Scaling",
             "conversion": "from_treble_bass_to_DT_Scaling",
             "incremental": false,
@@ -266,7 +253,7 @@
             }
         },
         "BL": {
-            "name": "Balance",
+            "name": "BL",
             "data_type": "DT_Scaling",
             "conversion": "from_balance_to_DT_Scaling",
             "incremental": false,
@@ -280,7 +267,7 @@
             }
         },
         "CH": {
-            "name": "Channel",
+            "name": "CH",
             "data_type": "DT_Number",
             "conversion": "from_channel_to_DT_Number",
             "incremental": false,

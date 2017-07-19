@@ -112,8 +112,6 @@ class Mprsg6zManager(Plugin):
         data = {}
 	sensor = value[0]
 	valeur = value[1]
-	if sensor == 'PR':
-	    sensor = 'STATUS'
         data[self.sensors[device_id][sensor]] = valeur       # sensor = sensor name in info.json file
         self.log.debug(u"==> Update Sensor {0}:{1} for device id {2} ({3})".format(sensor,valeur,device_id,self.device_list[device_id]["name"]))    # {u'id': u'value'}
 
@@ -150,9 +148,10 @@ class Mprsg6zManager(Plugin):
             device_name = self.device_list[device_id]["name"]
             self.log.info(u"==> Received for device '%s' MQ REQ command message: %s" % (device_name, format(data)))         # {u'command_id': 70, u'value': u'1', u'device_id': 169}
 
-            status, reason = self.mprsg6zvamp.setVzoneOneParam(device_id, param, data[param])
+            status, reason = self.mprsg6zvamp.VzoneOneCommand(device_id, param, data[param])
             if status:
-                self.send_pub_data(device_id, (param,data[param]))    # Update sensor command.
+		if param not in 'PO':
+                    self.send_pub_data(device_id, (param,data[param]))    # Update sensor command.
 
             # Reply MQ REP (acq) to REQ command
             self.send_rep_ack(status, reason, command_id, device_name) ;
