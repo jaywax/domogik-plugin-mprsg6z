@@ -39,7 +39,7 @@ import traceback
 import time
 import re
 
-PARAM_DEFAULT = {
+PZONE_DEFAULT = {
   "PA":"00",
   "PR":"00",
   "MU":"00",
@@ -50,6 +50,27 @@ PARAM_DEFAULT = {
   "BL":"10",
   "CH":"01",
   "LS":"00"
+}
+
+VZONE_DEFAULT = {
+  "Status":"locked",
+  "MU":"00",
+  "DT":"00",
+  "VO":"00",
+  "TR":"07",
+  "BS":"07",
+  "BL":"10",
+  "CH":"01"
+}
+
+PZONE_TO_VZONE = {
+  'MU',
+  'DT',
+  'VO',
+  'TR',
+  'BS',
+  'BL',
+  'CH'
 }
 
 # -------------------------------------------------------------------------------------------------
@@ -92,11 +113,11 @@ class Mprsg6zVamp:
             for j in range(1, 7):
                 zone = str(i) + str(j)
                 self.p_params[zone] = {}
-                for cle, valeur in PARAM_DEFAULT.items(): 
+                for cle, valeur in PZONE_DEFAULT.items(): 
                     self.p_params[zone][cle] = valeur
                 self.p_params[zone]['slaveof'] = []
                 self.p_params[zone]['lockedby'] = ""
-	self.log.info(u"==> Mprsg6z Amp created : channels : {0}, dev : {1}".format(self.channels, self.device))
+	self.log.info(u"==> Mprsg6z Amp created : channels : {0}, device : {1}".format(self.channels, self.device))
 
     # -------------------------------------------------------------------------------------------------
     def open(self):
@@ -311,11 +332,12 @@ class Mprsg6zVamp:
 
     # -------------------------------------------------------------------------------------------------
     def add_vzone(self, deviceid, zone_name, zone_childs):
-        """"Add a vzone to vzones list. """
+        """"
+	Add a vzone to _vzones list 
+	"""
 	self._vzones[deviceid] = {}
-        for cle, valeur in PARAM_DEFAULT.items():
+        for cle, valeur in VZONE_DEFAULT.items():
             self._vzones[deviceid][cle] = valeur
-	self._vzones[deviceid]['STATUS'] = 'locked'
 	self._vzones[deviceid]['childs'] = []
 	self._vzones[deviceid]['childs'] = zone_childs.split(",")
 	self._vzones[deviceid]['name'] = zone_name
@@ -324,13 +346,13 @@ class Mprsg6zVamp:
             self.p_params[child]['slaveof'].append(zone_name)
             flag = flag + self.p_params[child]['lockedby']
             if not flag:
-		self._vzones[deviceid]['STATUS'] = 'available'
-        # copie des parametres de la premiere p_zone child_
-       	for cle, valeur in PARAM_DEFAULT.items():
+		self._vzones[deviceid]['Status'] = 'available'
+        # copy of the interesting parameter of the first child of the _vzone
+       	for cle in PZONE_TO_VZONE:
             self._vzones[deviceid][cle] = self.p_params[self._vzones[deviceid]['childs'][0]][cle]
-        # we update all the p_zone params and create an old v_params
-        # for MQ Usage comparaison 
+        # update of all the param of the vamp
         self.getVampAll()
+	# copy current param of _vzones for comparaison
         self._vzones_old[deviceid] = self._vzones[deviceid].copy()
         self.log.info(u"==> vzone {0} created {1}".format(deviceid, zone_name))
 
@@ -338,35 +360,48 @@ class Mprsg6zVamp:
     def loop_read_vzones(self, send, stop):
         """
         """
-        self.log.info(u"Internal loop vzones reading started for {0} registered zones.".format(len(self._vzones)))
+        self.log.info(u"Internal loop for vzones reading started for {0} registered zones.".format(len(self._vzones)))
         while not stop.isSet():
             for zone in self._vzones:
 	        childs_lockedby = []
 		self.log.info(u"==>{0} is been  polled".format(self._vzones[zone]['name']))
+
+		# used to set status of a _vzone
 	    	for child in self._vzones[zone]['childs']:
 	            childs_lockedby.append(self.p_params[child]['lockedby'])   
-	    	    if len(set(childs_lockedby)) > 1:
-	                self._vzones[zone]['STATUS'] = "locked"
-		    else:
-                        first_pzone = self._vzones[zone]['childs'][0]
-                	if self.p_params[first_pzone]['lockedby'] == self._vzones[zone]['name']:
-                    	    self._vzones[zone]['STATUS'] = "on"
-                	elif self.p_params[first_pzone]['lockedby'] == '':
-                    	    self._vzones[zone]['STATUS'] = "available"
-                	else:
-                            self._vzones[zone]['STATUS'] = "locked"
-		    # 
-		for cle, valeur in PARAM_DEFAULT.items():
-                    self._vzones[zone][cle] = self.p_params[self._vzones[zone]["childs"][0]][cle]
-            	    diffparams = [param for param in self._vzones[zone] if self._vzones[zone][param] != self._vzones_old[zone][param]]
-            	    self._vzones_old[zone] = self._vzones[zone].copy()
-                    if diffparams:
-		        for i,elt in enumerate(diffparams):
-		            val = elt, self._vzones[zone][elt]
-                            self.log.debug(u"=> '{0}' : {1} update of {2} with value {3}".format(zone,self._vzones[zone]['name'],elt,self._vzones[zone][elt]))
-                            send(zone, val)
+		# if the len of the set of childs_lockedby is stricly superior to 1, the v_zone must be locked
+	    	if len(set(childs_lockedby)) > 1:
+	            self._vzones[zone]['Status'] = "locked"
+		    self.log.info(u"==>{0} is locked".format(self._vzones[zone]['name']))
+		else:
+		    # if one or minus than one child zone is locked, the status can be on or available
+		    # to know, we take the first p_zone child as model
+                    first_pzone = self._vzones[zone]['childs'][0]
+               	    if self.p_params[first_pzone]['lockedby'] == self._vzones[zone]['name']:
+                        self._vzones[zone]['Status'] = "on"
+		        self.log.info(u"==>{0} is on".format(self._vzones[zone]['name']))
+		    # if the p_zone model isn't not locked and the len of the set of childs_lockedby is equal to 0
+                    elif self.p_params[first_pzone]['lockedby'] == '' and len(set(childs_lockedby)) == 0:
+                        self._vzones[zone]['Status'] = "available"
+		        self.log.info(u"==>{0} is available".format(self._vzones[zone]['name']))
+		    # if the child is locked by another v_zone, the actual _vzone must be locked
+               	    else:
+                        self._vzones[zone]['Status'] = "locked"
+
+		# if the _vzone is on or available, we update the others params
+		if self._vzones[zone]['Status'] == 'on' or self._vzones[zone]['Status'] == 'available':
+		    self.log.info(u"==>{0} is {1}. We need to update its parameters.".format(self._vzones[zone]['name'],self._vzones[zone]['Status']))
+		    for cle in PZONE_TO_VZONE:
+                        self._vzones[zone][cle] = self.p_params[self._vzones[zone]["childs"][0]][cle]
+            	        diffparams = [param for param in self._vzones[zone] if self._vzones[zone][param] != self._vzones_old[zone][param]]
+            	        self._vzones_old[zone] = self._vzones[zone].copy()
+                        if diffparams:
+		            for i,elt in enumerate(diffparams):
+		                val = elt, self._vzones[zone][elt]
+                                self.log.info(u"=> '{0}' : {1} update of {2} with value {3}".format(zone,self._vzones[zone]['name'],elt,self._vzones[zone][elt]))
+                                send(zone, val)
 			    
-                stop.wait(2)
+                stop.wait(1)
 
     # -------------------------------------------------------------------------------------------------
     def setVzoneOneParam(self, device_id, param, value):
@@ -375,28 +410,28 @@ class Mprsg6zVamp:
 
         """
         # if the v_zones is not locked (on or available)
-        if not self._vzones[device_id]['STATUS'] == "locked" :
+        if not self._vzones[device_id]['Status'] == "locked" :
             # in case of Status arg
-            if param == 'STATUS': 
+            if param == 'PO': 
             # if we want to stand up a v_zone, we update the lockedby of each p_zone child
                 if value == '01':
 		# if alredy on we do nothing
-		    if self._vzones[device_id]['STATUS'] == "available":
+		    if self._vzones[device_id]['Status'] == "available":
                         for child in self._vzones[device_id]['childs']:
                             self.setOneZoneOneParam(child,'PR','01')
                             self.p_params[child]['lockedby'] = self._vzones[device_id]['name']
-		            self._vzones[device_id]['STATUS'] = "on"
+		            self._vzones[device_id]['Status'] = "on"
                 # if we want to shut down a v_zone, we update the lockedby of each p_zone child
 		# and release them.
 		else:
-		    if self._vzones[device_id]['STATUS'] == "on":
+		    if self._vzones[device_id]['Status'] == "on":
                         for child in self._vzones[device_id]['childs']:
                             self.setOneZoneOneParam(child,'PR','00')
                             self.p_params[child]['lockedby'] = ''
-		        self._vzones[device_id]['STATUS'] = "available"
+		        self._vzones[device_id]['Status'] = "available"
 	    # For the others params, a p_zone must be "on"
 	    else:
-	        if self._vzones[device_id]['STATUS'] == "on":
+	        if self._vzones[device_id]['Status'] == "on":
                     for child in self._vzones[device_id]['childs']:
                         self.setOneZoneOneParam(child,param,value)
 		        self._vzones[device_id][param] = value

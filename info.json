@@ -62,8 +62,8 @@
             "id": "mprsg6z.vzone",
             "description": "Mpr-Sg6z Virtual Zone",
             "name": "Virtual Zone",
-            "commands": ["STATUS", "MU", "DT", "VO", "TR", "BS", "BL", "CH"],
-            "sensors": ["STATUS", "MU", "DT", "VO", "TR", "BS", "BL", "CH"],
+            "commands": ["PO", "MU", "DT", "VO", "TR", "BS", "BL", "CH"],
+            "sensors": ["Status", "MU", "DT", "VO", "TR", "BS", "BL", "CH"],
             "parameters": [
                 {
 		    "default": "11",
@@ -76,13 +76,13 @@
         }
     },
     "commands": {
-        "STATUS": {
-           "name": "STATUS",
+        "PO": {
+           "name": "Power",
            "return_confirmation": true,
            "parameters": [
                 {
-                    "key" : "STATUS",
-                    "data_type" : "DT_Bool",
+                    "key" : "PO",
+                    "data_type" : "DT_Switch",
                     "conversion" : "from_DT_Switch_to_switch"
                 }
            ]
@@ -168,9 +168,22 @@
     "xpl_commands": {},
     "xpl_stats": {},
     "sensors": {
-        "STATUS": {
-            "name": "STATUS",
-            "data_type": "DT_Bool",
+        "Status": {
+            "name": "Status",
+            "data_type": "DT_String",
+            "conversion": "",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max": 0,
+                "expire": 0,
+                "round_value": 0
+	    },
+        "PO": {
+            "name": "Power",
+            "data_type": "DT_Switch",
             "conversion": "from_switch_to_DT_Switch",
             "incremental": false,
             "timeout": 0,
