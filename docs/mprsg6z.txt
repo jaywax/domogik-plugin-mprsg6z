@@ -14,9 +14,9 @@ Purpose
 =======
 
 This plugin allows you to use the `Monoprice Amp Multizone MPR-6ZHMAUT <https://www.monoprice.com/product?p_id=10761>`_
-with Domogik and rs232 protocol's commands.
+with Domogik via rs232 protocol's commands.
 
-The concept of devices **Virtual Amp (Vamp)** and **Virtual Zone (Vzone)** are used to provide a more flexible use of the **Physical Amp(s)**.
+The concept of devices **Virtual Zone (Vzone)** is used to provide a more flexible use of the **Physical Amp(s)**.
 
 A **Vamp** is the grouping of 1 to 3 Amp (if connected together with 18-pin ribbon cable) accessible 
 by the same rs232 connector. Each **Physical Amp** on the same rs232 connector is numbered from 1 to 3 and 

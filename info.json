@@ -55,6 +55,14 @@
             "name": "channel6",
             "required": "yes",
             "type": "string"
+        },
+        {
+            "default": "60",
+            "description": "Interval of polling in second to poll a virtual Zone",
+            "key": "interval",
+            "name": "interval",
+            "required": "yes",
+            "type": "string"
         }
     ],
     "device_types": {
@@ -175,7 +183,7 @@
             "incremental": false,
             "timeout": 0,
             "history": {
-                "store": true,
+                "store": false,
                 "duplicate": false,
                 "max": 0,
                 "expire": 0,
@@ -183,13 +191,13 @@
 	    }
 	},
         "MU": {
-            "name": "MU",
+            "name": "Mute",
             "data_type": "DT_Switch",
             "conversion": "from_switch_to_DT_Switch",
             "incremental": false,
             "timeout": 0,
             "history": {
-                "store": true,
+                "store": false,
                 "duplicate": false,
                 "max": 0,
                 "expire": 0,
@@ -197,13 +205,13 @@
 	    }
         },
         "DT": {
-            "name": "DT",
+            "name": "Do not disturb",
             "data_type": "DT_Switch",
             "conversion": "from_switch_to_DT_Switch",
             "incremental": false,
             "timeout": 0,
             "history": {
-                "store": true,
+                "store": false,
                 "duplicate": false,
                 "max": 0,
                 "expire": 0,
@@ -211,13 +219,13 @@
 	    }
         },
         "VO": {
-            "name": "VO",
+            "name": "Volume",
             "data_type": "DT_Scaling",
             "conversion": "from_volume_to_DT_Scaling",
             "incremental": false,
             "timeout": 0,
             "history": {
-                "store": true,
+                "store": false,
                 "duplicate": false,
                 "max": 0,
                 "expire": 0,
@@ -225,13 +233,13 @@
             }
         },
         "TR": {
-            "name": "TR",
+            "name": "Treble",
             "data_type": "DT_Scaling",
             "conversion": "from_treble_bass_to_DT_Scaling",
             "incremental": false,
             "timeout": 0,
             "history": {
-                "store": true,
+                "store": false,
                 "duplicate": false,
                 "max": 0,
                 "expire": 0,
@@ -239,13 +247,13 @@
             }
         },
         "BS": {
-            "name": "BS",
+            "name": "Bass",
             "data_type": "DT_Scaling",
             "conversion": "from_treble_bass_to_DT_Scaling",
             "incremental": false,
             "timeout": 0,
             "history": {
-                "store": true,
+                "store": false,
                 "duplicate": false,
                 "max": 0,
                 "expire": 0,
@@ -253,13 +261,13 @@
             }
         },
         "BL": {
-            "name": "BL",
+            "name": "Balance",
             "data_type": "DT_Scaling",
             "conversion": "from_balance_to_DT_Scaling",
             "incremental": false,
             "timeout": 0,
             "history": {
-                "store": true,
+                "store": false,
                 "duplicate": false,
                 "max": 0,
                 "expire": 0,
@@ -267,13 +275,13 @@
             }
         },
         "CH": {
-            "name": "CH",
+            "name": "Channel",
             "data_type": "DT_Number",
             "conversion": "from_channel_to_DT_Number",
             "incremental": false,
             "timeout": 0,
             "history": {
-                "store": true,
+                "store": false,
                 "duplicate": false,
                 "max": 0,
                 "expire": 0,

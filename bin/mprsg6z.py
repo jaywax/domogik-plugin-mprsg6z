@@ -55,14 +55,13 @@ class Mprsg6zManager(Plugin):
         if not self.check_configured():
             return
 
-
-        # get the devices list
+        # get the devices, sensors and command lists
         self.devices = self.get_device_list(quit_if_no_device=True)
 	self.sensors = self.get_sensors(self.devices)
 	self.commands = self.get_commands(self.devices)
-        self.log.info(u"==> device:   %s" % format(self.devices))
-        self.log.info(u"==> sensors:   %s" % format(self.sensors))
-        self.log.info(u"==> commands:   %s" % format(self.commands))
+        self.log.debug(u"==> device: {0}".format(self.devices))
+        self.log.debug(u"==> sensors: {0}".format(self.sensors))
+        self.log.debug(u"==> commands: {0}".format(self.commands))
 
 	# ### get all config keys
         mprsg6z_device = str(self.get_config('device'))
@@ -74,6 +73,7 @@ class Mprsg6zManager(Plugin):
         mprsg6z_channel6 = self.get_config('channel6')
 	mprsg6z_channels = {'01' : mprsg6z_channel1, '02' : mprsg6z_channel2, '03' : mprsg6z_channel3, '04' : mprsg6z_channel4, 
 	'05' : mprsg6z_channel5, '06' : mprsg6z_channel6}
+	mprsg6z_interval = self.get_config('interval')
 
         # create vamp device and open it
         try:
@@ -98,7 +98,7 @@ class Mprsg6zManager(Plugin):
 	thread_sensors = threading.Thread(None,
         				self.mprsg6zvamp.loop_read_vzones,
         				'Main_reading_vzones',
-        				(self.send_pub_data, self.get_stop()),
+        				(self.send_pub_data, self.get_stop(),mprsg6z_interval),
         				{})
         thread_sensors.start()
         self.register_thread(thread_sensors)
@@ -107,13 +107,15 @@ class Mprsg6zManager(Plugin):
     # -------------------------------------------------------------------------------------------------
 
     def send_pub_data(self, device_id, value):
-        """ Send the sensors values over MQ
+        """ 
+	   Send the sensors values over MQ
         """
         data = {}
+	# data must be split 
 	sensor = value[0]
 	valeur = value[1]
-        data[self.sensors[device_id][sensor]] = valeur       # sensor = sensor name in info.json file
-        self.log.debug(u"==> Update Sensor {0}:{1} for device id {2} ({3})".format(sensor,valeur,device_id,self.device_list[device_id]["name"]))    # {u'id': u'value'}
+        data[self.sensors[device_id][sensor]] = valeur
+        self.log.debug(u"==> Update Sensor {0}:{1} for device id {2} ({3})".format(sensor,valeur,device_id,self.device_list[device_id]["name"]))
 
         try:
             self._pub.send_event('client.sensor', data)
@@ -125,10 +127,10 @@ class Mprsg6zManager(Plugin):
     # -------------------------------------------------------------------------------------------------
 
     def on_mdp_request(self, msg):
-        """ Called when a MQ req/rep message is received
+        """ 
+	   Called when a MQ req/rep message is received
         """
         Plugin.on_mdp_request(self, msg)
-        # self.log.info(u"==> Received 0MQ messages: %s" % format(msg))
         if msg.get_action() == "client.cmd":
             reason = None
             status = True
@@ -146,12 +148,14 @@ class Mprsg6zManager(Plugin):
                 return
 
             device_name = self.device_list[device_id]["name"]
-            self.log.info(u"==> Received for device '%s' MQ REQ command message: %s" % (device_name, format(data)))         # {u'command_id': 70, u'value': u'1', u'device_id': 169}
+            self.log.debug(u"==> Received for device {0} MQ REQ command message: {1}".format(device_name, data))         # {u'command_id': 70, u'value': u'1', u'device_id': 169}
 
             status, reason = self.mprsg6zvamp.VzoneOneCommand(device_id, param, data[param])
             if status:
 		if param not in 'PO':
                     self.send_pub_data(device_id, (param,data[param]))    # Update sensor command.
+	        else:
+		    self.mprsg6zvamp.update_vzone_status(self.send_pub_data) # Force Update of zones
 
             # Reply MQ REP (acq) to REQ command
             self.send_rep_ack(status, reason, command_id, device_name) ;
