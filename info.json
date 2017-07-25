@@ -55,14 +55,6 @@
             "name": "channel6",
             "required": "yes",
             "type": "string"
-        },
-        {
-            "default": "60",
-            "description": "Interval of polling in second to poll a virtual Zone",
-            "key": "interval",
-            "name": "interval",
-            "required": "yes",
-            "type": "string"
         }
     ],
     "device_types": {
@@ -79,6 +71,55 @@
                     "xpl": false,
                     "description": "Childs physical zone of a vamp. Must be separated by a coma, example : 11, 12, 13",
                     "type": "string"
+                },
+		{   
+                    "default": "True",
+                    "description": "Volume parameter is it synchronized between all physical zones childs of that vzone ?",
+                    "key": "VO",
+                    "xpl": false,
+            	    "type": "boolean"
+                },
+		{   
+                    "default": "True",
+                    "description": "Channel parameter is it synchronized between all physical zones childs of that vzone ?",
+                    "key": "CH",
+                    "xpl": false,
+            	    "type": "boolean"
+                },
+		{   
+                    "default": "True",
+                    "description": "Bass parameter is it synchronized between all physical zones childs of that vzone ?",
+                    "key": "BS",
+                    "xpl": false,
+            	    "type": "boolean"
+                },
+		{   
+                    "default": "True",
+                    "description": "Treble parameter is it synchronized between all physical zones childs of that vzone ?",
+                    "key": "TR",
+                    "xpl": false,
+            	    "type": "boolean"
+                },
+		{   
+                    "default": "True",
+                    "description": "Treble parameter is it synchronized between all physical zones childs of that vzone ?",
+                    "key": "BL",
+                    "xpl": false,
+            	    "type": "boolean"
+                },
+		{   
+                    "default": "True",
+                    "description": "Mute parameter is it synchronized between all physical zones childs of that vzone ?",
+                    "key": "MU",
+                    "xpl": false,
+            	    "type": "boolean"
+                },
+		{   
+                    "default": "True",
+                    "description": "Do Not Disturb parameter is it synchronized between all physical zones childs of that vzone ?",
+                    "key": "DT",
+                    "xpl": false,
+            	    "type": "boolean"
                 }
             ]
         }
@@ -183,9 +224,9 @@
             "incremental": false,
             "timeout": 0,
             "history": {
-                "store": false,
+                "store": true,
                 "duplicate": false,
-                "max": 0,
+                "max" :1,
                 "expire": 0,
                 "round_value": 0
 	    }
@@ -197,9 +238,9 @@
             "incremental": false,
             "timeout": 0,
             "history": {
-                "store": false,
+                "store": true,
                 "duplicate": false,
-                "max": 0,
+                "max" :1,
                 "expire": 0,
                 "round_value": 0
 	    }
@@ -211,9 +252,9 @@
             "incremental": false,
             "timeout": 0,
             "history": {
-                "store": false,
+                "store": true,
                 "duplicate": false,
-                "max": 0,
+                "max" :1,
                 "expire": 0,
                 "round_value": 0
 	    }
@@ -225,9 +266,9 @@
             "incremental": false,
             "timeout": 0,
             "history": {
-                "store": false,
+                "store": true,
                 "duplicate": false,
-                "max": 0,
+                "max" :1,
                 "expire": 0,
                 "round_value": 0
             }
@@ -239,9 +280,9 @@
             "incremental": false,
             "timeout": 0,
             "history": {
-                "store": false,
+                "store": true,
                 "duplicate": false,
-                "max": 0,
+                "max" :1,
                 "expire": 0,
                 "round_value": 0
             }
@@ -253,9 +294,9 @@
             "incremental": false,
             "timeout": 0,
             "history": {
-                "store": false,
+                "store": true,
                 "duplicate": false,
-                "max": 0,
+                "max" :1,
                 "expire": 0,
                 "round_value": 0
             }
@@ -267,9 +308,9 @@
             "incremental": false,
             "timeout": 0,
             "history": {
-                "store": false,
+                "store": true,
                 "duplicate": false,
-                "max": 0,
+                "max" :1,
                 "expire": 0,
                 "round_value": 0
             }
@@ -281,9 +322,23 @@
             "incremental": false,
             "timeout": 0,
             "history": {
-                "store": false,
+                "store": true,
                 "duplicate": false,
-                "max": 0,
+                "max" :1,
+                "expire": 0,
+                "round_value": 0
+            }
+        },
+        "CH_DES": {
+            "name": "Channel Description",
+            "data_type": "DT_String",
+            "conversion": "",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max" :1,
                 "expire": 0,
                 "round_value": 0
             }

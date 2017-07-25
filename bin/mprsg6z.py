@@ -63,7 +63,7 @@ class Mprsg6zManager(Plugin):
         self.log.debug(u"==> sensors: {0}".format(self.sensors))
         self.log.debug(u"==> commands: {0}".format(self.commands))
 
-	# ### get all config keys
+	# get config keys for the vamp
         mprsg6z_device = str(self.get_config('device'))
         mprsg6z_channel1 = self.get_config('channel1')
         mprsg6z_channel2 = self.get_config('channel2')
@@ -73,7 +73,6 @@ class Mprsg6zManager(Plugin):
         mprsg6z_channel6 = self.get_config('channel6')
 	mprsg6z_channels = {'01' : mprsg6z_channel1, '02' : mprsg6z_channel2, '03' : mprsg6z_channel3, '04' : mprsg6z_channel4, 
 	'05' : mprsg6z_channel5, '06' : mprsg6z_channel6}
-	mprsg6z_interval = self.get_config('interval')
 
         # create vamp device and open it
         try:
@@ -85,20 +84,21 @@ class Mprsg6zManager(Plugin):
             self.force_leave()
             return
 
-	# for each vzone
+	# for each vzone device
         self.device_list = {}
         thread_sensors = None
         for a_device in self.devices:
+	    # get config keys for vzone
             device_name = a_device["name"]
             device_id = a_device["id"]
             device_type = a_device["device_type_id"]
             device_childs = self.get_parameter(a_device, "childs")
             self.device_list.update({device_id : {'name': device_name, 'childs': device_childs}})
-	    self.mprsg6zvamp.add_vzone(device_id,device_name,device_childs)
+	    self.mprsg6zvamp.vzone_add(device_id,device_name,device_childs)
 	thread_sensors = threading.Thread(None,
-        				self.mprsg6zvamp.loop_read_vzones,
+        				self.mprsg6zvamp.loop_vzones_update,
         				'Main_reading_vzones',
-        				(self.send_pub_data, self.get_stop(),mprsg6z_interval),
+        				(self.send_pub_data, self.get_stop()),
         				{})
         thread_sensors.start()
         self.register_thread(thread_sensors)
@@ -150,18 +150,19 @@ class Mprsg6zManager(Plugin):
             device_name = self.device_list[device_id]["name"]
             self.log.debug(u"==> Received for device {0} MQ REQ command message: {1}".format(device_name, data))         # {u'command_id': 70, u'value': u'1', u'device_id': 169}
 
-            status, reason = self.mprsg6zvamp.VzoneOneCommand(device_id, param, data[param])
+            status, reason = self.mprsg6zvamp.vzone_set_one_command(device_id, param, data[param])
             if status:
 		if param not in 'PO':
                     self.send_pub_data(device_id, (param,data[param]))    # Update sensor command.
 	        else:
-		    self.mprsg6zvamp.update_vzone_status(self.send_pub_data) # Force Update of zones
+		    self.mprsg6zvamp.vzone_update_status(self.send_pub_data) # Force Update of zones
 
             # Reply MQ REP (acq) to REQ command
             self.send_rep_ack(status, reason, command_id, device_name) ;
 
 
     # -------------------------------------------------------------------------------------------------
+
     def send_rep_ack(self, status, reason, cmd_id, dev_name):
         """ Send MQ REP (acq) to command
         """
