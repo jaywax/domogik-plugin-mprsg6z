@@ -12,13 +12,14 @@ Plugin mprsg6z
 
 Purpose
 =======
+This is a no xPL plugin, sensor value are update by **0mq messages**
 
 This plugin allows you to use the `Monoprice Amp Multizone MPR-6ZHMAUT <https://www.monoprice.com/product?p_id=10761>`_
 with Domogik via rs232 protocol's commands.
 
 The concept of devices **Virtual Zone (Vzone)** is used to provide a more flexible use of the **Physical Amp(s)**.
 
-A **Vamp** is the grouping of 1 to 3 Amp (if connected together with 18-pin ribbon cable) accessible 
+A **Virtual Amp (Vamp)** is the grouping of 1 to 3 **Physical Amp(s)** (if connected together with 18-pin ribbon cable) accessible 
 by the same rs232 connector. Each **Physical Amp** on the same rs232 connector is numbered from 1 to 3 and 
 each **Physical zone** is numbered from 1 to 6:
 
@@ -60,8 +61,6 @@ parameters are available (sensor/command) :
 +---------+----------------------------------+-----------------------------------------------------------------------------+
 |Channel  |Set the channel of the Vzone      |Number from 1 to 6 corresponding to the channel 1 to 6 			   |
 +---------+----------------------------------+-----------------------------------------------------------------------------+
-
-This is a no xPL plugin, sensor value are update by **0mq messages**
 
 Dependencies
 ============

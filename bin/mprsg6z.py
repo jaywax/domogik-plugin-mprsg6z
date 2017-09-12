@@ -59,9 +59,9 @@ class Mprsg6zManager(Plugin):
         self.devices = self.get_device_list(quit_if_no_device=True)
 	self.sensors = self.get_sensors(self.devices)
 	self.commands = self.get_commands(self.devices)
-        self.log.debug(u"==> device: {0}".format(self.devices))
-        self.log.debug(u"==> sensors: {0}".format(self.sensors))
-        self.log.debug(u"==> commands: {0}".format(self.commands))
+        self.log.debug(u"= = = > device: {0}".format(self.devices))
+        self.log.debug(u"= = = > sensors: {0}".format(self.sensors))
+        self.log.debug(u"= = = > commands: {0}".format(self.commands))
 
 	# get config keys for the vamp
         mprsg6z_device = str(self.get_config('device'))
@@ -84,17 +84,19 @@ class Mprsg6zManager(Plugin):
             self.force_leave()
             return
 
-	# for each vzone device
         self.device_list = {}
         thread_sensors = None
+	# for each vzone device
         for a_device in self.devices:
 	    # get config keys for vzone
             device_name = a_device["name"]
             device_id = a_device["id"]
             device_type = a_device["device_type_id"]
             device_childs = self.get_parameter(a_device, "childs")
-            self.device_list.update({device_id : {'name': device_name, 'childs': device_childs}})
-	    self.mprsg6zvamp.vzone_add(device_id,device_name,device_childs)
+	    device_tosync = {'VO' : self.get_parameter(a_device, "VO"), 'CH' : self.get_parameter(a_device, "CH"), 'BS' : self.get_parameter(a_device, "BS"), 'TR' : self.get_parameter(a_device, "TR"),
+	    'BL' : self.get_parameter(a_device, "BL"), 'MU' : self.get_parameter(a_device, "MU"), 'DT' : self.get_parameter(a_device, "DT")}
+            self.device_list.update({device_id : {'name': device_name, 'childs': device_childs, 'tosync' : device_tosync}})
+	    self.mprsg6zvamp.vzone_add(device_id, device_name, device_childs, device_tosync)
 	thread_sensors = threading.Thread(None,
         				self.mprsg6zvamp.loop_vzones_update,
         				'Main_reading_vzones',
@@ -115,13 +117,13 @@ class Mprsg6zManager(Plugin):
 	sensor = value[0]
 	valeur = value[1]
         data[self.sensors[device_id][sensor]] = valeur
-        self.log.debug(u"==> Update Sensor {0}:{1} for device id {2} ({3})".format(sensor,valeur,device_id,self.device_list[device_id]["name"]))
+        self.log.debug(u"= = = > Update Sensor {0}:{1} for device id {2} ({3})".format(sensor,valeur,device_id,self.device_list[device_id]["name"]))
 
         try:
             self._pub.send_event('client.sensor', data)
         except:
             # We ignore the message if some values are not correct
-            self.log.debug(u"Bad MQ message to send. This may happen due to some invalid rainhour data. MQ data is : {0}".format(data))
+            self.log.debug(u"= = = > Bad MQ message to send. This may happen due to some invalid rainhour data. MQ data is : {0}".format(data))
             pass
 
     # -------------------------------------------------------------------------------------------------
@@ -129,6 +131,8 @@ class Mprsg6zManager(Plugin):
     def on_mdp_request(self, msg):
         """ 
 	   Called when a MQ req/rep message is received
+
+           @param msg : message received from MQ
         """
         Plugin.on_mdp_request(self, msg)
         if msg.get_action() == "client.cmd":
@@ -141,14 +145,14 @@ class Mprsg6zManager(Plugin):
 	    z = ["device_id","command_id"]
 	    param = list(set(data)-set(z))[0]
             if device_id not in self.device_list:
-                self.log.error(u"### MQ REQ command, Device ID '%s' unknown, Have you restarted the plugin after device creation ?" % device_id)
+                self.log.error(u"# # # MQ REQ command, Device ID {0} unknown, Have you restarted the plugin after device creation ?".format(device_id))
                 status = False
-                reason = u"Plugin onewired: Unknown device ID %d" % device_id
+                reason = u"Plugin mprsg6z: Unknown device ID {0}".format(device_id)
                 self.send_rep_ack(status, reason, command_id, "unknown") ;                      # Reply MQ REP (acq) to REQ command
                 return
 
             device_name = self.device_list[device_id]["name"]
-            self.log.debug(u"==> Received for device {0} MQ REQ command message: {1}".format(device_name, data))         # {u'command_id': 70, u'value': u'1', u'device_id': 169}
+            self.log.debug(u"= = = > Received for device {0} MQ REQ command message: {1}".format(device_name, data))         # {u'command_id': 70, u'value': u'1', u'device_id': 169}
 
             status, reason = self.mprsg6zvamp.vzone_set_one_command(device_id, param, data[param])
             if status:
@@ -166,7 +170,7 @@ class Mprsg6zManager(Plugin):
     def send_rep_ack(self, status, reason, cmd_id, dev_name):
         """ Send MQ REP (acq) to command
         """
-        self.log.info(u"==> Reply MQ REP (acq) to REQ command id '%s' for device '%s'" % (cmd_id, dev_name))
+        self.log.info(u"= = = > Reply MQ REP (acq) to REQ command id {0} for device {0}".format(cmd_id, dev_name))
         reply_msg = MQMessage()
         reply_msg.set_action('client.cmd.result')
         reply_msg.add_data('status', status)

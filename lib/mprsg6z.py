@@ -93,12 +93,11 @@ class Mprsg6zVamp:
     """
     def __init__(self, log, channels, device='/dev/ttyUSB0'):
         """
-            Construct the instance virtual amp
+            Create python object virtual amp
 
-            Keyword arguments:
-            log -- log instance
-            channels -- dict with descrption of the 6 input channel
-            device -- rs232 device (default /dev/ttyUSB0)
+            @param log : log instance
+            @param channels : dict with descrption of the 6 input channel
+            @param device : rs232 device (default /dev/ttyUSB0)
         """
 
         self.log = log 
@@ -166,10 +165,9 @@ class Mprsg6zVamp:
 
     def pzone_get_one_zone_all_param(self, p_zone):
         """
-            Poll all params of a pzone and update the dict _pzones{} with it
+            Pull all params of a physical zone and update the dict _pzones{} with it
 
-            Keyword arguments:
-            p_zone -- pzone to pull
+            @param p_zone : physical zone of the amp to pull
         """
 	command = '?' + str(p_zone) + '\r\n'
         try:
@@ -201,10 +199,9 @@ class Mprsg6zVamp:
             Send command to set a pzone param to the amp
 	    Update the corresponding _pzones with it
 
-            Keyword arguments:
-            p_zone -- the physical zone to set
-            param -- the param to set
-            value -- the value to set
+            @param p_zone : the physical zone to set
+            @param param : the param to set
+            @param value : the value to set
         """
 	command = '<' + str(p_zone) + str(param) + str(value) + '\r\n'
         try:
@@ -219,14 +216,14 @@ class Mprsg6zVamp:
 
     # -------------------------------------------------------------------------------------------------
 
-    def vzone_add(self, deviceid, zone_name, zone_childs):
+    def vzone_add(self, deviceid, zone_name, zone_childs, zone_tosync):
         """"
 	    Add a vzone to _vzones list 
 
-            Keyword arguments:
-            deviceid -- deviceid of the vzone to add
-	    zone_name -- name of the zone to add
-	    zone_childs -- pzones childs of the vzone
+            @param deviceid : deviceid of the vzone to add
+	    @param zone_name : name of the zone to add
+	    @param zone_childs : pzones childs of the vzone
+	    @param zone_tosync : params to sync between vzones
 	"""
 	self._vzones[deviceid] = {}
         for cle, valeur in VZONE_DEFAULT.items():
@@ -235,12 +232,14 @@ class Mprsg6zVamp:
 	self._vzones[deviceid]['childs'] = zone_childs.split(",")
 	self._vzones[deviceid]['name'] = zone_name
 	flag = ''
+	# update the slaveof parameter of a p_zone
         for child in self._vzones[deviceid]['childs']:
             self._pzones[child]['slaveof'].append(zone_name)
+	    # test if we must set the vzone status to lockedby
             flag = flag + self._pzones[child]['lockedby']
             if not flag:
 		self._vzones[deviceid]['Status'] = 'off'
-        # update of all the param of the vamp
+        # we launch update.param of the first child
 	self.pzone_get_one_zone_all_param(self._vzones[deviceid]['childs'][0])
         # copy of the interesting parameter of the first child of the _vzone
        	for cle in PZONE_TO_VZONE:
@@ -255,8 +254,7 @@ class Mprsg6zVamp:
         """
             Determine the status of a vzone and update sensors
 
- 	    Keyword arguments:
-	    send -- send method of the vamp object for mq communication
+	    @param send : send method of the vamp object for mq communication
 	"""
         for zone in self._vzones:
             childs_lockedby = []
@@ -285,40 +283,15 @@ class Mprsg6zVamp:
 	    for cle in PZONE_TO_VZONE:
                 send(zone, (cle, self._vzones[zone][cle]))
 
-    # -------------------------------------------------------------------------------------------------
-
-    def loop_vzones_update(self, send, stop):
-        """
-            Main loop to keep updated _pzones and _vzones
-
- 	    Keyword arguments:
-	    send -- send method of the vamp object for mq communication
-	    stop -- send method of the vamp object for stopping loop
-        """
-        self.log.info(u"Internal loop to keep sync _pzones and _vzones started for {0} vzones.".format(len(self._vzones)))
-	while not stop.isSet():
-            for zone in self._vzones:
-	        for cle in PZONE_TO_VZONE:
-                    self._vzones[zone][cle] = self._pzones[self._vzones[zone]["childs"][0]][cle]
-                    diffparams = [param for param in self._vzones[zone] if self._vzones[zone][param] != self._vzones_old[zone][param]]
-                    self._vzones_old[zone] = self._vzones[zone].copy()
-                    if diffparams:
-                        for i,elt in enumerate(diffparams):
-                            val = elt, self._vzones[zone][elt]
-                            self.log.info(u"'{0}' : {1} update of {2} with value {3}".format(zone,self._vzones[zone]['name'],elt,self._vzones[zone][elt]))
-                            send(zone, val)
-	        stop.wait(1)
-
-    # -------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------- 
 
     def vzone_set_one_command(self, device_id, command, value):
         """
             Treat the command receive by mq and call method to interact with amp
 
- 	    Keyword arguments:
-	    device_id -- device id of the vzone
-	    command -- command to execute
-	    value -- value to set by the command
+	    @param device_id : device id of the vzone
+	    @param command : command to execute
+	    @param value : value to set by the command
 
         """
         # if the vzone is not locked (on or off)
@@ -351,6 +324,30 @@ class Mprsg6zVamp:
         	    return False, reason
 	reason = u"The vzone is locked"
         return False, reason
+
+    # -------------------------------------------------------------------------------------------------
+
+    def loop_vzones_update(self, send, stop):
+        """
+            Main loop to keep updated _pzones and _vzones
+
+	    @param send : send method of the vamp object for mq communication
+	    @param stop : send method of the vamp object for stopping loop
+        """
+        self.log.info(u"Internal loop to keep sync _pzones and _vzones started for {0} vzones.".format(len(self._vzones)))
+	while not stop.isSet():
+            for zone in self._vzones:
+	        for cle in PZONE_TO_VZONE:
+                    self._vzones[zone][cle] = self._pzones[self._vzones[zone]["childs"][0]][cle]
+                    diffparams = [param for param in self._vzones[zone] if self._vzones[zone][param] != self._vzones_old[zone][param]]
+                    self._vzones_old[zone] = self._vzones[zone].copy()
+                    if diffparams:
+                        for i,elt in enumerate(diffparams):
+                            val = elt, self._vzones[zone][elt]
+                            self.log.info(u"'{0}' : {1} update of {2} with value {3}".format(zone,self._vzones[zone]['name'],elt,self._vzones[zone][elt]))
+                            send(zone, val)
+	        stop.wait(1)
+        self.close()
 
 # Unused -------------------------------------------------------------------------------------------------
 
