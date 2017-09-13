@@ -1,0 +1,310 @@
+{
+    "configuration": [
+        {
+            "default": "/dev/ttyUSB0",
+            "description": "Serial bus to use to connect to the virtual Amp",
+            "key": "device",
+            "name": "device",
+            "required": "yes",
+            "type": "string"
+        },
+        {
+            "default": "Channel1",
+            "description": "Name of the channel 1 of virtual Amp",
+            "key": "channel1",
+            "name": "channel1",
+            "required": "yes",
+            "type": "string"
+        },
+        {
+            "default": "Channel2",
+            "description": "Name of the channel 2 of virtual Amp",
+            "key": "channel2",
+            "name": "channel2",
+            "required": "yes",
+            "type": "string"
+        },
+        {
+            "default": "Channel3",
+            "description": "Name of the channel 3 of virtual Amp",
+            "key": "channel3",
+            "name": "channel3",
+            "required": "yes",
+            "type": "string"
+        },
+        {
+            "default": "Channel4",
+            "description": "Name of the channel 4 of virtual Amp",
+            "key": "channel4",
+            "name": "channel4",
+            "required": "yes",
+            "type": "string"
+        },
+        {
+            "default": "Channel5",
+            "description": "Name of the channel 5 of virtual Amp",
+            "key": "channel5",
+            "name": "channel5",
+            "required": "yes",
+            "type": "string"
+        },
+        {
+            "default": "Channel6",
+            "description": "Name of the channel 6 of virtual Amp",
+            "key": "channel6",
+            "name": "channel6",
+            "required": "yes",
+            "type": "string"
+        }
+    ],
+    "device_types": {
+        "mprsg6z.vzone": {
+            "id": "mprsg6z.vzone",
+            "description": "Mpr-Sg6z Virtual Zone",
+            "name": "Vzone",
+            "commands": ["PO", "MU", "DT", "VO", "TR", "BS", "BL", "CH"],
+            "sensors": ["Status", "MU", "DT", "VO", "TR", "BS", "BL", "CH"],
+            "parameters": [
+                {
+		    "default": "11",
+                    "key": "childs",
+                    "xpl": false,
+                    "description": "Childs physical zone of a vamp. Must be separated by a coma, example : 11, 12, 13",
+                    "type": "string"
+                }
+            ]
+        }
+    },
+    "commands": {
+        "PO": {
+           "name": "Power",
+           "return_confirmation": true,
+           "parameters": [
+                {
+                    "key" : "PO",
+                    "data_type" : "DT_Trigger",
+                    "conversion" : ""
+                }
+           ]
+        },
+        "MU": {
+           "name": "Mute",
+           "return_confirmation": true,
+           "parameters": [
+                {
+                    "key" : "MU",
+                    "data_type" : "DT_Switch",
+                    "conversion" : "from_DT_Switch_to_switch"
+                }
+           ]
+        },
+        "DT": {
+           "name": "Do not disturb",
+           "return_confirmation": true,
+           "parameters": [
+                {
+                    "key" : "DT",
+                    "data_type" : "DT_Switch",
+                    "conversion" : "from_DT_Switch_to_switch"
+                }
+           ]
+        },
+        "VO": {
+           "name": "Volume",
+           "return_confirmation": true,
+           "parameters": [
+                {
+                    "key" : "VO",
+                    "data_type" : "DT_Scaling",
+                    "conversion" : "from_DT_Scaling_to_volume"
+                }
+           ]
+        },
+        "TR": {
+           "name": "Treble",
+           "return_confirmation": true,
+           "parameters": [
+                {
+                    "key" : "TR",
+                    "data_type" : "DT_Scaling",
+                    "conversion" : "from_DT_Scaling_to_treble_bass"
+                }
+           ]
+        },
+        "BS": {
+           "name": "Bass",
+           "return_confirmation": true,
+           "parameters": [
+                {
+                    "key" : "BS",
+                    "data_type" : "DT_Scaling",
+                    "conversion" : "from_DT_Scaling_to_treble_bass"
+                }
+           ]
+        },
+        "BL": {
+           "name": "Balance",
+           "return_confirmation": true,
+           "parameters": [
+                {
+                    "key" : "BL",
+                    "data_type" : "DT_Scaling",
+                    "conversion" : "from_DT_Scaling_to_balance"
+                }
+           ]
+        },
+        "CH": {
+           "name": "Channel",
+           "return_confirmation": true,
+           "parameters": [
+                {
+                    "key" : "CH",
+                    "data_type" : "DT_Number",
+                    "conversion" : "from_DT_Number_to_channel"
+                }
+           ]
+        } 
+    },
+    "xpl_commands": {},
+    "xpl_stats": {},
+    "sensors": {
+        "Status": {
+            "name": "Status",
+            "data_type": "DT_String",
+            "conversion": "",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max" :1,
+                "expire": 0,
+                "round_value": 0
+	    }
+	},
+        "MU": {
+            "name": "Mute",
+            "data_type": "DT_Switch",
+            "conversion": "from_switch_to_DT_Switch",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max" :1,
+                "expire": 0,
+                "round_value": 0
+	    }
+        },
+        "DT": {
+            "name": "Do not disturb",
+            "data_type": "DT_Switch",
+            "conversion": "from_switch_to_DT_Switch",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max" :1,
+                "expire": 0,
+                "round_value": 0
+	    }
+        },
+        "VO": {
+            "name": "Volume",
+            "data_type": "DT_Scaling",
+            "conversion": "from_volume_to_DT_Scaling",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max" :1,
+                "expire": 0,
+                "round_value": 0
+            }
+        },
+        "TR": {
+            "name": "Treble",
+            "data_type": "DT_Scaling",
+            "conversion": "from_treble_bass_to_DT_Scaling",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max" :1,
+                "expire": 0,
+                "round_value": 0
+            }
+        },
+        "BS": {
+            "name": "Bass",
+            "data_type": "DT_Scaling",
+            "conversion": "from_treble_bass_to_DT_Scaling",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max" :1,
+                "expire": 0,
+                "round_value": 0
+            }
+        },
+        "BL": {
+            "name": "Balance",
+            "data_type": "DT_Scaling",
+            "conversion": "from_balance_to_DT_Scaling",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max" :1,
+                "expire": 0,
+                "round_value": 0
+            }
+        },
+        "CH": {
+            "name": "Channel",
+            "data_type": "DT_Number",
+            "conversion": "from_channel_to_DT_Number",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max" :1,
+                "expire": 0,
+                "round_value": 0
+            }
+        },
+        "CH_DES": {
+            "name": "Channel Description",
+            "data_type": "DT_String",
+            "conversion": "",
+            "incremental": false,
+            "timeout": 0,
+            "history": {
+                "store": true,
+                "duplicate": false,
+                "max" :1,
+                "expire": 0,
+                "round_value": 0
+            }
+        }
+    },
+    "identity": {
+        "name": "mprsg6z",
+        "author": "jaywax",
+        "author_email": "jaywax.2.bourbon at gmail dot com",
+        "dependencies": [],
+        "description": "MPR-SG6Z (MPR-6ZHMAUT) monoprice rs232 interface",
+        "domogik_min_version": "0.5.2",
+        "type": "plugin",
+        "version": "0.1",
+        "tags": ["multiroom", "multizone", "sound", "music", "monoprice", "mpr-6zhmaut"]
+    },
+    "json_version": 2
+}
