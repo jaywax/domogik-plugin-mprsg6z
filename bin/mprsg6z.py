@@ -170,7 +170,7 @@ class Mprsg6zManager(Plugin):
     def send_rep_ack(self, status, reason, cmd_id, dev_name):
         """ Send MQ REP (acq) to command
         """
-        self.log.info(u"= = = > Reply MQ REP (acq) to REQ command id {0} for device {0}".format(cmd_id, dev_name))
+        self.log.info(u"= = > Reply MQ REP (acq) to REQ command id {0} for device {0}".format(cmd_id, dev_name))
         reply_msg = MQMessage()
         reply_msg.set_action('client.cmd.result')
         reply_msg.add_data('status', status)

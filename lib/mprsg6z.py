@@ -116,7 +116,7 @@ class Mprsg6zVamp:
                     self._pzones[zone][cle] = valeur
                 self._pzones[zone]['slaveof'] = []
                 self._pzones[zone]['lockedby'] = ""
-	self.log.info(u"Virtual Amp created : channels : {0}, device : {1}.".format(self.channels, self.device))
+	self.log.info(u"= = > Virtual Amp created : channels : {0}, device : {1}.".format(self.channels, self.device))
 
     # -------------------------------------------------------------------------------------------------
 
@@ -126,7 +126,7 @@ class Mprsg6zVamp:
         """
         try:
             self._ser = serial.Serial(self.device, 9600, timeout=1)
-	    self.log.info(u"Virtual Amp opened({}).".format(self.device))
+	    self.log.info(u"= = > Virtual Amp opened({}).".format(self.device))
         except:
             error = u"Error while opening device : {}".format(self.device)
             raise Mprsg6zException(error)
@@ -172,7 +172,7 @@ class Mprsg6zVamp:
 	command = '?' + str(p_zone) + '\r\n'
         try:
             self._ser.write(command)
-            self.log.debug(u"==>Command {0} sent to the amp".format(command.rstrip()))
+            self.log.debug(u"= = = > Command {0} sent to the amp".format(command.rstrip()))
         except:
             error = "Error while polling device : {}".format(self.dev)
             raise Mprsg6zException(error)
@@ -206,7 +206,7 @@ class Mprsg6zVamp:
 	command = '<' + str(p_zone) + str(param) + str(value) + '\r\n'
         try:
             self._ser.write(command)
-            self.log.debug(u"==>Command {0} sent to the amp".format(command.rstrip()))
+            self.log.debug(u"= = = > Command {0} sent to the amp".format(command.rstrip()))
         except:
             error = "Error while polling device : {}".format(self.device)
             raise Mprsg6zException(error)
@@ -246,7 +246,7 @@ class Mprsg6zVamp:
             self._vzones[deviceid][cle] = self._pzones[self._vzones[deviceid]['childs'][0]][cle]
 	# copy current param of _vzones for comparaison
         self._vzones_old[deviceid] = self._vzones[deviceid].copy()
-        self.log.info(u"Vzone {0} created : {1} with pzone childs {2}".format(deviceid, self._vzones[deviceid]['name'], self._vzones[deviceid]['childs']))
+        self.log.info(u"= = > Vzone {0} created : {1} with pzone childs {2}".format(deviceid, self._vzones[deviceid]['name'], self._vzones[deviceid]['childs']))
 
     # ------------------------------------------------------------------------------------------------- 
     
@@ -267,7 +267,7 @@ class Mprsg6zVamp:
                     self._vzones[zone]['Status'] = "locked"
                 else:
                     # if one or minus than one child zone is locked, the status can be on or off
-                    # to know, we take the first p_zone child as model
+                    # to know it, we take the first p_zone child as model
                     first_pzone = self._vzones[zone]['childs'][0]
                     if self._pzones[first_pzone]['lockedby'] == self._vzones[zone]['name']:
                         self._vzones[zone]['Status'] = "on"
@@ -334,7 +334,7 @@ class Mprsg6zVamp:
 	    @param send : send method of the vamp object for mq communication
 	    @param stop : send method of the vamp object for stopping loop
         """
-        self.log.info(u"Internal loop to keep sync _pzones and _vzones started for {0} vzones.".format(len(self._vzones)))
+        self.log.info(u"= = > Internal loop to keep sync _pzones and _vzones started for {0} vzones.".format(len(self._vzones)))
 	while not stop.isSet():
             for zone in self._vzones:
 	        for cle in PZONE_TO_VZONE:
@@ -344,7 +344,7 @@ class Mprsg6zVamp:
                     if diffparams:
                         for i,elt in enumerate(diffparams):
                             val = elt, self._vzones[zone][elt]
-                            self.log.info(u"'{0}' : {1} update of {2} with value {3}".format(zone,self._vzones[zone]['name'],elt,self._vzones[zone][elt]))
+                            self.log.info(u"= = > '{0}' : {1} update of {2} with value {3}".format(zone,self._vzones[zone]['name'],elt,self._vzones[zone][elt]))
                             send(zone, val)
 	        stop.wait(1)
         self.close()
