@@ -61,7 +61,7 @@
         "mprsg6z.vzone": {
             "id": "mprsg6z.vzone",
             "description": "Mpr-Sg6z Virtual Zone",
-            "name": "Virtual Zone",
+            "name": "Vzone",
             "commands": ["PO", "MU", "DT", "VO", "TR", "BS", "BL", "CH"],
             "sensors": ["Status", "MU", "DT", "VO", "TR", "BS", "BL", "CH"],
             "parameters": [
@@ -71,55 +71,6 @@
                     "xpl": false,
                     "description": "Childs physical zone of a vamp. Must be separated by a coma, example : 11, 12, 13",
                     "type": "string"
-                },
-		{   
-                    "default": "True",
-                    "description": "Volume parameter is it synchronized between all physical zones childs of that vzone ?",
-                    "key": "VO",
-                    "xpl": false,
-            	    "type": "boolean"
-                },
-		{   
-                    "default": "True",
-                    "description": "Channel parameter is it synchronized between all physical zones childs of that vzone ?",
-                    "key": "CH",
-                    "xpl": false,
-            	    "type": "boolean"
-                },
-		{   
-                    "default": "True",
-                    "description": "Bass parameter is it synchronized between all physical zones childs of that vzone ?",
-                    "key": "BS",
-                    "xpl": false,
-            	    "type": "boolean"
-                },
-		{   
-                    "default": "True",
-                    "description": "Treble parameter is it synchronized between all physical zones childs of that vzone ?",
-                    "key": "TR",
-                    "xpl": false,
-            	    "type": "boolean"
-                },
-		{   
-                    "default": "True",
-                    "description": "Treble parameter is it synchronized between all physical zones childs of that vzone ?",
-                    "key": "BL",
-                    "xpl": false,
-            	    "type": "boolean"
-                },
-		{   
-                    "default": "True",
-                    "description": "Mute parameter is it synchronized between all physical zones childs of that vzone ?",
-                    "key": "MU",
-                    "xpl": false,
-            	    "type": "boolean"
-                },
-		{   
-                    "default": "True",
-                    "description": "Do Not Disturb parameter is it synchronized between all physical zones childs of that vzone ?",
-                    "key": "DT",
-                    "xpl": false,
-            	    "type": "boolean"
                 }
             ]
         }

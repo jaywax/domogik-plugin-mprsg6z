@@ -216,14 +216,15 @@ class Mprsg6zVamp:
 
     # -------------------------------------------------------------------------------------------------
 
-    def vzone_add(self, deviceid, zone_name, zone_childs, zone_tosync):
+    # next release : tosync parameter
+    #def vzone_add(self, deviceid, zone_name, zone_childs, zone_tosync):
+    def vzone_add(self, deviceid, zone_name, zone_childs):
         """"
 	    Add a vzone to _vzones list 
 
             @param deviceid : deviceid of the vzone to add
 	    @param zone_name : name of the zone to add
 	    @param zone_childs : pzones childs of the vzone
-	    @param zone_tosync : params to sync between vzones
 	"""
 	self._vzones[deviceid] = {}
         for cle, valeur in VZONE_DEFAULT.items():

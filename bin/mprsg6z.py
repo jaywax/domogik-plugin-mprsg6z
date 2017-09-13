@@ -93,10 +93,14 @@ class Mprsg6zManager(Plugin):
             device_id = a_device["id"]
             device_type = a_device["device_type_id"]
             device_childs = self.get_parameter(a_device, "childs")
-	    device_tosync = {'VO' : self.get_parameter(a_device, "VO"), 'CH' : self.get_parameter(a_device, "CH"), 'BS' : self.get_parameter(a_device, "BS"), 'TR' : self.get_parameter(a_device, "TR"),
-	    'BL' : self.get_parameter(a_device, "BL"), 'MU' : self.get_parameter(a_device, "MU"), 'DT' : self.get_parameter(a_device, "DT")}
-            self.device_list.update({device_id : {'name': device_name, 'childs': device_childs, 'tosync' : device_tosync}})
-	    self.mprsg6zvamp.vzone_add(device_id, device_name, device_childs, device_tosync)
+	    # next release : to_sync parameter
+	    #device_tosync = {'VO' : self.get_parameter(a_device, "VO"), 'CH' : self.get_parameter(a_device, "CH"), 'BS' : self.get_parameter(a_device, "BS"), 'TR' : self.get_parameter(a_device, "TR"),
+	    #'BL' : self.get_parameter(a_device, "BL"), 'MU' : self.get_parameter(a_device, "MU"), 'DT' : self.get_parameter(a_device, "DT")}
+            #self.device_list.update({device_id : {'name': device_name, 'childs': device_childs, 'tosync' : device_tosync}})
+            self.device_list.update({device_id : {'name': device_name, 'childs': device_childs}})
+	    # next release : to_sync parameter
+	    #self.mprsg6zvamp.vzone_add(device_id, device_name, device_childs, device_tosync)
+	    self.mprsg6zvamp.vzone_add(device_id, device_name, device_childs)
 	thread_sensors = threading.Thread(None,
         				self.mprsg6zvamp.loop_vzones_update,
         				'Main_reading_vzones',
