@@ -17,7 +17,7 @@ env:
   DMG_PLUGIN=mprsg6z
 install:
   - cd ~
-  - git clone https://github.com/jaywax/domogik.git
+  - git clone https://github.com/domogik/domogik.git
   - cd domogik
   - git checkout $DMG_BRANCH
   - ~/domogik/src/domogik/tests/travis/travis-install-dependencies.sh
