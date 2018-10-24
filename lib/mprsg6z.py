@@ -76,7 +76,7 @@ PZONE_TO_VZONE = {
 # -------------------------------------------------------------------------------------------------
 class Mprsg6zException(Exception):
     """
-        Mprsg6z exception
+    Mprsg6z exception
     """
 
     def __init__(self, value):
@@ -89,15 +89,16 @@ class Mprsg6zException(Exception):
 # -------------------------------------------------------------------------------------------------
 class Mprsg6zVamp:
     """
-        Create python object and methods to interact with amps via rs232
+    Create python object and methods to interact with amps via rs232
     """
     def __init__(self, log, channels, device='/dev/ttyUSB0'):
         """
-            Create python object virtual amp
+        Create python object virtual amp
 
-            @param log : log instance
-            @param channels : dict with descrption of the 6 input channel
-            @param device : rs232 device (default /dev/ttyUSB0)
+        Keyword arguments:
+        log -- log instance
+        channels -- dict with descrption of the 6 input channel
+        device -- rs232 device (default /dev/ttyUSB0)
         """
 
         self.log = log 
@@ -122,7 +123,7 @@ class Mprsg6zVamp:
 
     def open(self):
         """
-            Method used to open the rs232 device with serial.serial
+        Method used to open the rs232 device with serial.serial
         """
         try:
             self._ser = serial.Serial(self.device, 9600, timeout=1)
@@ -134,7 +135,7 @@ class Mprsg6zVamp:
 
     def close(self):
         """
-            Method used to close the rs232 device with serial.serial
+        Method used to close the rs232 device with serial.serial
         """
         try:
             self._ser.close()
@@ -144,10 +145,10 @@ class Mprsg6zVamp:
 
     def _readline(self, a_serial, eol=b'\r\r\n'):
         """
-            Format the data return by the amp during status query
+        Format the data return by the amp during status query
 
-            Keyword arguments:
-            a_serial -- the Serial.serial line
+        Keyword arguments:
+        a_serial -- the Serial.serial line
         """
         leneol = len(eol)
         line = bytearray()
@@ -165,9 +166,10 @@ class Mprsg6zVamp:
 
     def pzone_get_one_zone_all_param(self, p_zone):
         """
-            Pull all params of a physical zone and update the dict _pzones{} with it
+        Pull all params of a physical zone and update the dict _pzones{} with it
 
-            @param p_zone : physical zone of the amp to pull
+        Keyword arguments:
+        p_zone -- physical zone of the amp to pull
         """
 	command = '?' + str(p_zone) + '\r\n'
         try:
@@ -196,12 +198,13 @@ class Mprsg6zVamp:
 
     def pzone_set_one_zone_one_param(self, p_zone, param, value):
         """
-            Send command to set a pzone param to the amp
-	    Update the corresponding _pzones with it
+        Send command to set a pzone param to the amp
+	Update the corresponding _pzones with it
 
-            @param p_zone : the physical zone to set
-            @param param : the param to set
-            @param value : the value to set
+        Keyword arguments:
+        p_zone -- the physical zone to set
+        param -- the param to set
+        value -- the value to set
         """
 	command = '<' + str(p_zone) + str(param) + str(value) + '\r\n'
         try:
@@ -220,11 +223,12 @@ class Mprsg6zVamp:
     #def vzone_add(self, deviceid, zone_name, zone_childs, zone_tosync):
     def vzone_add(self, deviceid, zone_name, zone_childs):
         """"
-	    Add a vzone to _vzones list 
+	Add a vzone to _vzones list 
 
-            @param deviceid : deviceid of the vzone to add
-	    @param zone_name : name of the zone to add
-	    @param zone_childs : pzones childs of the vzone
+	Keyword arguments:
+        deviceid -- deviceid of the vzone to add
+	zone_name -- name of the zone to add
+	zone_childs -- pzones childs of the vzone
 	"""
 	self._vzones[deviceid] = {}
         for cle, valeur in VZONE_DEFAULT.items():
@@ -253,9 +257,10 @@ class Mprsg6zVamp:
     
     def vzone_update_status(self, send):
         """
-            Determine the status of a vzone and update sensors
+        Determine the status of a vzone and update sensors
 
-	    @param send : send method of the vamp object for mq communication
+	Keyword arguments:
+	send -- send method of the vamp object for mq communication
 	"""
         for zone in self._vzones:
             childs_lockedby = []
@@ -288,12 +293,12 @@ class Mprsg6zVamp:
 
     def vzone_set_one_command(self, device_id, command, value):
         """
-            Treat the command receive by mq and call method to interact with amp
+        Treat the command receive by mq and call method to interact with amp
 
-	    @param device_id : device id of the vzone
-	    @param command : command to execute
-	    @param value : value to set by the command
-
+	Keyword arguments:
+	device_id -- device id of the vzone
+	command -- command to execute
+	value -- value to set by the command
         """
         # if the vzone is not locked (on or off)
         if not self._vzones[device_id]['Status'] == "locked":
@@ -330,10 +335,11 @@ class Mprsg6zVamp:
 
     def loop_vzones_update(self, send, stop):
         """
-            Main loop to keep updated _pzones and _vzones
+        Main loop to keep updated _pzones and _vzones
 
-	    @param send : send method of the vamp object for mq communication
-	    @param stop : send method of the vamp object for stopping loop
+	Keyword arguments:
+	send -- send method of the vamp object for mq communication
+	stop -- send method of the vamp object for stopping loop
         """
         self.log.info(u"= = > Internal loop to keep sync _pzones and _vzones started for {0} vzones.".format(len(self._vzones)))
 	while not stop.isSet():

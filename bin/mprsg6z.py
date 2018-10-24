@@ -47,7 +47,7 @@ class Mprsg6zManager(Plugin):
   # -------------------------------------------------------------------------------------------------
     def __init__(self):
         """
-            Init plugin
+        Init plugin
         """
         Plugin.__init__(self, name='mprsg6z')
 
@@ -114,7 +114,7 @@ class Mprsg6zManager(Plugin):
 
     def send_pub_data(self, device_id, value):
         """ 
-	   Send the sensors values over MQ
+	Send the sensors values over MQ
         """
         data = {}
 	# data must be split 
@@ -134,9 +134,10 @@ class Mprsg6zManager(Plugin):
 
     def on_mdp_request(self, msg):
         """ 
-	   Called when a MQ req/rep message is received
+	Called when a MQ req/rep message is received
 
-           @param msg : message received from MQ
+	Keyword arguments:
+        msg -- message received from MQ
         """
         Plugin.on_mdp_request(self, msg)
         if msg.get_action() == "client.cmd":
@@ -172,7 +173,14 @@ class Mprsg6zManager(Plugin):
     # -------------------------------------------------------------------------------------------------
 
     def send_rep_ack(self, status, reason, cmd_id, dev_name):
-        """ Send MQ REP (acq) to command
+        """ 
+	Send MQ REP (acq) to command
+
+	Keyword arguments:
+	status -- The status of the ack
+	reason -- The reason of the ack
+	cmd_id -- The cmd_id for log use
+	dev_name -- The neme of the dev for log use
         """
         self.log.info(u"= = > Reply MQ REP (acq) to REQ command id {0} for device {0}".format(cmd_id, dev_name))
         reply_msg = MQMessage()
